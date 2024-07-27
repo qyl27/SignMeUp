@@ -125,7 +125,14 @@ dependencies {
     // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
     // The group id is ignored when searching -- in this case, it is "blank"
     // implementation "blank:coolmod-${mc_version}:${coolmod_version}"
-
+    if (System.getProperty("idea.active")) {
+        implementation("cn.ussshenzhou:t88:0.9.+")
+        annotationProcessor("cn.ussshenzhou:t88:0.9.+")
+    } else {
+        def t88FileId = '5560995'
+        implementation 'curse.maven:t88-663112:' + t88FileId
+        annotationProcessor 'curse.maven:t88-663112:' + t88FileId
+    }
     // Example mod dependency using a file as dependency
     // implementation files("libs/coolmod-${mc_version}-${coolmod_version}.jar")
 
