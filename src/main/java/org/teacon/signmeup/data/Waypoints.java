@@ -59,7 +59,7 @@ public class Waypoints implements TConfig {
 
         @Override
         public String toString() {
-            return "WayPoint [name=" + name + ", description=" + description + ", <" + x + ", " + y + ", " + z + ">]";
+            return "[WayPoint name=" + name + ", description=" + description + ", <" + x + ", " + y + ", " + z + ">]";
         }
     }
 }

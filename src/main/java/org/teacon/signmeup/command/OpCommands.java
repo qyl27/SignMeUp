@@ -54,12 +54,11 @@ public class OpCommands {
         var waypoint = new Waypoints.WayPoint(name, description, pos.getX(), pos.getY(), pos.getZ());
         ConfigHelper.getConfigWrite(Waypoints.class, waypoints -> {
             waypoints.waypoints.stream().filter(w -> w.name.equals(waypoint.name)).findFirst().ifPresentOrElse(
-                    point -> context.getSource().sendSuccess(() -> Component.literal("Waypoint " + point + " already exists. Remove it first if you want to replace it."), true),
+                    point -> context.getSource().sendSuccess(() -> Component.literal("[" + point + "] already exists. Remove it first if you want to replace it."), true),
                     () -> {
                         context.getSource().sendSuccess(() -> Component.literal("Added " + waypoint), true);
                         waypoints.waypoints.add(waypoint);
-                        Optional.ofNullable(context.getSource().getPlayer())
-                                .ifPresent(player -> NetworkHelper.sendToPlayer(player, new SetWaypointPacket(name, description, pos)));
+                        NetworkHelper.sendToAllPlayers(new SetWaypointPacket(name, description, pos));
                     }
             );
         });
@@ -71,9 +70,9 @@ public class OpCommands {
         var waypoint = Waypoints.WayPoint.dumbWayPoint(name);
         ConfigHelper.getConfigWrite(Waypoints.class, waypoints -> {
             if (waypoints.waypoints.remove(waypoint)) {
-                context.getSource().sendSuccess(() -> Component.literal("Waypoint [" + name + "] removed"), true);
+                context.getSource().sendSuccess(() -> Component.literal("[" + name + "] removed"), true);
                 Optional.ofNullable(context.getSource().getPlayer())
-                        .ifPresent(player -> NetworkHelper.sendToPlayer(player, new RemoveWaypointPacket(name)));
+                        .ifPresent(player -> NetworkHelper.sendToAllPlayers(new RemoveWaypointPacket(name)));
             } else {
                 context.getSource().sendFailure(Component.literal("No waypoint called " + name));
             }
