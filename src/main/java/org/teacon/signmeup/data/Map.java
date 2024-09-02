@@ -12,6 +12,6 @@ public class Map implements TConfig {
     }
 
     public final String title = "TeaCon";
-    public final int worldWidth = 256, worldHeight = 256;
+    public final int worldSize = 512;
     public final int centerWorldX = 0, centerWorldZ = 0;
 }

@@ -9,6 +9,8 @@ import net.minecraft.network.chat.Component;
 public class MapScreen extends TScreen {
     private static MapScreen instance = new MapScreen();
 
+    private final MapWidget mapWidget = new MapWidget();
+
     public static MapScreen getNewInstance() {
         instance = new MapScreen();
         return instance;
@@ -20,5 +22,12 @@ public class MapScreen extends TScreen {
 
     public MapScreen() {
         super(Component.literal("Map Screen"));
+        this.add(mapWidget);
+    }
+
+    @Override
+    public void layout() {
+        mapWidget.setBounds(0, 0, width, height);
+        super.layout();
     }
 }
