@@ -10,7 +10,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.teacon.signmeup.SignMeUp;
-import org.teacon.signmeup.data.Waypoints;
+import org.teacon.signmeup.config.Waypoints;
 
 /**
  * @author USS_Shenzhou

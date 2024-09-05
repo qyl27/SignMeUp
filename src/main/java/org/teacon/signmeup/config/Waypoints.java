@@ -1,4 +1,4 @@
-package org.teacon.signmeup.data;
+package org.teacon.signmeup.config;
 
 import cn.ussshenzhou.t88.config.TConfig;
 import net.minecraft.core.BlockPos;
@@ -14,7 +14,7 @@ public class Waypoints implements TConfig {
         return "SignMeUp";
     }
 
-    public final LinkedHashSet<WayPoint> waypoints = new LinkedHashSet<>();
+    public LinkedHashSet<WayPoint> waypoints = new LinkedHashSet<>();
 
     public static class WayPoint {
         public final String name, description;

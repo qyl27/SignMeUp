@@ -12,7 +12,7 @@ import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.commands.arguments.coordinates.WorldCoordinates;
 import net.minecraft.network.chat.Component;
-import org.teacon.signmeup.data.Waypoints;
+import org.teacon.signmeup.config.Waypoints;
 import org.teacon.signmeup.network.RemoveWaypointPacket;
 import org.teacon.signmeup.network.SetWaypointPacket;
 

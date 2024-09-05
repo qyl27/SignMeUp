@@ -1,4 +1,4 @@
-package org.teacon.signmeup.data;
+package org.teacon.signmeup.config;
 
 import cn.ussshenzhou.t88.config.TConfig;
 
@@ -12,7 +12,8 @@ public class PlayerCommands implements TConfig {
     public String getChildDirName() {
         return "SignMeUp";
     }
-    public final ArrayList<Command> waypoints = new ArrayList<>();
+
+    public ArrayList<Command> waypoints = new ArrayList<>();
 
     public static class Command{
         public final String name = "";

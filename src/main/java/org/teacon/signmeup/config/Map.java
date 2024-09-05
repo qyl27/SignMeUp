@@ -1,4 +1,4 @@
-package org.teacon.signmeup.data;
+package org.teacon.signmeup.config;
 
 import cn.ussshenzhou.t88.config.TConfig;
 
@@ -11,7 +11,7 @@ public class Map implements TConfig {
         return "SignMeUp";
     }
 
-    public final String title = "TeaCon";
-    public final int worldSize = 512;
-    public final int centerWorldX = 0, centerWorldZ = 0;
+    public String title = "TeaCon";
+    public int worldSize = 512;
+    public int centerWorldX = 0, centerWorldZ = 0;
 }
