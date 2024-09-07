@@ -1,5 +1,6 @@
 package org.teacon.signmeup.hud;
 
+import cn.ussshenzhou.t88.T88;
 import cn.ussshenzhou.t88.config.ConfigHelper;
 import cn.ussshenzhou.t88.gui.widegt.TPanel;
 import com.mojang.blaze3d.shaders.Uniform;
@@ -7,17 +8,32 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectListIterator;
+import net.caffeinemc.mods.sodium.client.gl.device.CommandList;
+import net.caffeinemc.mods.sodium.client.gl.device.RenderDevice;
+import net.caffeinemc.mods.sodium.client.render.SodiumWorldRenderer;
+import net.caffeinemc.mods.sodium.client.render.chunk.ChunkRenderMatrices;
+import net.caffeinemc.mods.sodium.client.render.chunk.DefaultChunkRenderer;
+import net.caffeinemc.mods.sodium.client.render.chunk.RenderSectionManager;
+import net.caffeinemc.mods.sodium.client.render.chunk.ShaderChunkRenderer;
+import net.caffeinemc.mods.sodium.client.render.chunk.terrain.DefaultTerrainRenderPasses;
+import net.caffeinemc.mods.sodium.client.render.chunk.vertex.format.ChunkVertexType;
+import net.caffeinemc.mods.sodium.client.render.viewport.Viewport;
+import net.caffeinemc.mods.sodium.client.render.viewport.ViewportProvider;
+import net.caffeinemc.mods.sodium.client.util.FlawlessFrames;
+import net.irisshaders.iris.Iris;
+import net.irisshaders.iris.uniforms.CapturedRenderingState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.chunk.SectionRenderDispatcher;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
+import org.teacon.signmeup.SignMeUp;
 import org.teacon.signmeup.config.MiniMap;
 
 import static org.lwjgl.opengl.GL40C.*;
@@ -29,9 +45,10 @@ public class MiniMapPanel extends TPanel {
     public static final ObjectArrayList<SectionRenderDispatcher.RenderSection> VISIBLE_SECTIONS = new ObjectArrayList<>(10000);
     private static int minimapSize, FBO, COLOR, DEPTH;
     private static final Matrix4f MODEL_VIEW_MATRIX = new Matrix4f();
-    private static final Matrix4f PROJECTION_MATRIX_IDENT = new Matrix4f();
+    private static final Matrix4f PROJECTION_MATRIX = new Matrix4f();
     private static final Quaternionf QUATERNION = new Quaternionf();
     private static final float PI = (float) Math.PI;
+    public static boolean rendering = false;
 
     static {
         var window = Minecraft.getInstance().getWindow();
@@ -78,13 +95,76 @@ public class MiniMapPanel extends TPanel {
 
     private void renderMap(GuiGraphics graphics) {
         var minecraft = Minecraft.getInstance();
-        var pos = prepare(minecraft);
+        prepare(minecraft);
+        var camera = minecraft.gameRenderer.getMainCamera();
+        var pos = camera.getPosition();
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
         glViewport(0, 0, minimapSize, minimapSize);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        RenderType.chunkBufferLayers()
-                .stream().filter(renderType -> renderType != RenderType.tripwire())
-                .forEach(renderType -> renderSectionLayer(renderType, pos.x, pos.y, pos.z));
+        Frustum frustum = new Frustum(MODEL_VIEW_MATRIX, PROJECTION_MATRIX);
+        if (SignMeUp.IS_SODIUM_INSTALLED) {
+            try {
+                @SuppressWarnings("JavaReflectionMemberAccess")
+                var sodiumWorldRendererField = LevelRenderer.class.getDeclaredField("renderer");
+                sodiumWorldRendererField.setAccessible(true);
+                var sodiumWorldRenderer = (SodiumWorldRenderer) sodiumWorldRendererField.get(minecraft.levelRenderer);
+                var renderSectionManagerField = SodiumWorldRenderer.class.getDeclaredField("renderSectionManager");
+                renderSectionManagerField.setAccessible(true);
+                var renderSectionManager = (RenderSectionManager) renderSectionManagerField.get(sodiumWorldRenderer);
+                var chunkRendererField = RenderSectionManager.class.getDeclaredField("chunkRenderer");
+                chunkRendererField.setAccessible(true);
+                var shaderChunkRenderer = (ShaderChunkRenderer) chunkRendererField.get(renderSectionManager);
+                var vertexTypeField = ShaderChunkRenderer.class.getDeclaredField("vertexType");
+                vertexTypeField.setAccessible(true);
+                var vertexType = (ChunkVertexType) vertexTypeField.get(shaderChunkRenderer);
+                var projectionMatrixTmp = RenderSystem.getProjectionMatrix();
+
+                RenderSystem.setProjectionMatrix(PROJECTION_MATRIX, RenderSystem.getVertexSorting());
+                var posSodium = pos.add(0, 320, 0);
+                frustum.prepare(posSodium.x, posSodium.y, posSodium.z);
+                @SuppressWarnings("DataFlowIssue")
+                Viewport viewport = ((ViewportProvider) frustum).sodium$createViewport();
+                var matrices = new ChunkRenderMatrices(PROJECTION_MATRIX, MODEL_VIEW_MATRIX);
+                var gbufferModelViewTmp = CapturedRenderingState.INSTANCE.getGbufferModelView();
+                CapturedRenderingState.INSTANCE.setGbufferModelView(MODEL_VIEW_MATRIX);
+                camera.setPosition(posSodium);
+                RenderDevice.enterManagedCode();
+                var renderer = new DefaultChunkRenderer(RenderDevice.INSTANCE, vertexType);
+                var name = Iris.getIrisConfig().getShaderPackName();
+                Iris.getIrisConfig().setShaderPackName(null);
+                rendering = true;
+                sodiumWorldRenderer.setupTerrain(camera, viewport, minecraft.player.isSpectator(), FlawlessFrames.isActive());
+                RenderDevice device = RenderDevice.INSTANCE;
+                CommandList commandList = device.createCommandList();
+                renderSectionManager.renderLayer(matrices, DefaultTerrainRenderPasses.SOLID, posSodium.x, posSodium.y, posSodium.z);
+                renderSectionManager.renderLayer(matrices, DefaultTerrainRenderPasses.CUTOUT, posSodium.x, posSodium.y, posSodium.z);
+                renderSectionManager.renderLayer(matrices, DefaultTerrainRenderPasses.TRANSLUCENT, posSodium.x, posSodium.y, posSodium.z);
+                //renderer.render(matrices, commandList, renderSectionManager.getRenderLists(), DefaultTerrainRenderPasses.SOLID, new CameraTransform(posSodium.x, posSodium.y, posSodium.z));
+                //commandList.flush();
+                //commandList = device.createCommandList();
+                //renderer.render(matrices, commandList, renderSectionManager.getRenderLists(), DefaultTerrainRenderPasses.CUTOUT, new CameraTransform(posSodium.x, posSodium.y, posSodium.z));
+                //commandList.flush();
+                //commandList = device.createCommandList();
+                //renderer.render(matrices, commandList, renderSectionManager.getRenderLists(), DefaultTerrainRenderPasses.TRANSLUCENT, new CameraTransform(posSodium.x, posSodium.y, posSodium.z));
+                commandList.flush();
+                rendering = false;
+                name.ifPresent(s -> Iris.getIrisConfig().setShaderPackName(s));
+                RenderDevice.exitManagedCode();
+                CapturedRenderingState.INSTANCE.setGbufferModelView(gbufferModelViewTmp);
+                camera.setPosition(pos);
+                RenderSystem.setProjectionMatrix(projectionMatrixTmp, RenderSystem.getVertexSorting());
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                if (T88.TEST) {
+                    throw new RuntimeException(e);
+                }
+            }
+        } else {
+            frustum.prepare(pos.x, pos.y, pos.z);
+            minecraft.levelRenderer.sectionOcclusionGraph.addSectionsInFrustum(frustum, VISIBLE_SECTIONS);
+            RenderType.chunkBufferLayers()
+                    .stream().filter(renderType -> renderType != RenderType.tripwire())
+                    .forEach(renderType -> renderSectionLayer(renderType, pos.x, pos.y, pos.z));
+        }
         graphics.pose().pushPose();
         glBindFramebuffer(GL_FRAMEBUFFER, Minecraft.getInstance().getMainRenderTarget().frameBufferId);
         var window = minecraft.getWindow();
@@ -103,7 +183,7 @@ public class MiniMapPanel extends TPanel {
         graphics.pose().popPose();
     }
 
-    private static Vec3 prepare(Minecraft minecraft) {
+    private static void prepare(Minecraft minecraft) {
         var cfgR = ConfigHelper.getConfigRead(MiniMap.class);
         var camera = minecraft.gameRenderer.getMainCamera();
         MODEL_VIEW_MATRIX.identity();
@@ -112,17 +192,10 @@ public class MiniMapPanel extends TPanel {
             QUATERNION.rotateY(PI + camera.getYRot() * PI / 180);
         }
         MODEL_VIEW_MATRIX.rotation(QUATERNION);
-        PROJECTION_MATRIX_IDENT.identity();
+        PROJECTION_MATRIX.identity();
         int mapCoverBlocksHalf = cfgR.getCoverRange() / 2;
-        PROJECTION_MATRIX_IDENT.ortho(-mapCoverBlocksHalf, mapCoverBlocksHalf, -mapCoverBlocksHalf, mapCoverBlocksHalf, -300, 300);
-
-        Frustum frustum = new Frustum(MODEL_VIEW_MATRIX, PROJECTION_MATRIX_IDENT);
-        var pos = camera.getPosition().add(0, 0, 0);
-        frustum.prepare(pos.x, pos.y, pos.z);
-        var levelRenderer = minecraft.levelRenderer;
+        PROJECTION_MATRIX.ortho(-mapCoverBlocksHalf, mapCoverBlocksHalf, -mapCoverBlocksHalf, mapCoverBlocksHalf, -1000, 1000);
         VISIBLE_SECTIONS.clear();
-        levelRenderer.sectionOcclusionGraph.addSectionsInFrustum(frustum, VISIBLE_SECTIONS);
-        return pos;
     }
 
 
@@ -133,7 +206,7 @@ public class MiniMapPanel extends TPanel {
         ObjectListIterator<SectionRenderDispatcher.RenderSection> objectlistiterator = VISIBLE_SECTIONS.listIterator(notTranslucent ? 0 : VISIBLE_SECTIONS.size());
         ShaderInstance shaderinstance = RenderSystem.getShader();
         //noinspection DataFlowIssue
-        shaderinstance.setDefaultUniforms(VertexFormat.Mode.QUADS, MODEL_VIEW_MATRIX, PROJECTION_MATRIX_IDENT, minecraft.getWindow());
+        shaderinstance.setDefaultUniforms(VertexFormat.Mode.QUADS, MODEL_VIEW_MATRIX, PROJECTION_MATRIX, minecraft.getWindow());
         if (shaderinstance.SCREEN_SIZE != null) {
             shaderinstance.SCREEN_SIZE.set(minimapSize, minimapSize);
         }
