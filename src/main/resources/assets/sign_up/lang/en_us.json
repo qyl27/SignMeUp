@@ -3,7 +3,7 @@
   "key.sign_up.open_map": "Show Map",
   "key.sign_up.open_new_map": "New Map Instance",
 
-  "gui.sign_up.minimap": "Minimap",
+  "gui.sign_up.minimap": "  Minimap",
   "gui.sign_up.minimap.range": "Minimap Range",
   "gui.sign_up.minimap.rotate": "Follow Player Rotating"
 }

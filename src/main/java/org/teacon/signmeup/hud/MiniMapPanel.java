@@ -139,13 +139,6 @@ public class MiniMapPanel extends TPanel {
                 renderSectionManager.renderLayer(matrices, DefaultTerrainRenderPasses.SOLID, posSodium.x, posSodium.y, posSodium.z);
                 renderSectionManager.renderLayer(matrices, DefaultTerrainRenderPasses.CUTOUT, posSodium.x, posSodium.y, posSodium.z);
                 renderSectionManager.renderLayer(matrices, DefaultTerrainRenderPasses.TRANSLUCENT, posSodium.x, posSodium.y, posSodium.z);
-                //renderer.render(matrices, commandList, renderSectionManager.getRenderLists(), DefaultTerrainRenderPasses.SOLID, new CameraTransform(posSodium.x, posSodium.y, posSodium.z));
-                //commandList.flush();
-                //commandList = device.createCommandList();
-                //renderer.render(matrices, commandList, renderSectionManager.getRenderLists(), DefaultTerrainRenderPasses.CUTOUT, new CameraTransform(posSodium.x, posSodium.y, posSodium.z));
-                //commandList.flush();
-                //commandList = device.createCommandList();
-                //renderer.render(matrices, commandList, renderSectionManager.getRenderLists(), DefaultTerrainRenderPasses.TRANSLUCENT, new CameraTransform(posSodium.x, posSodium.y, posSodium.z));
                 commandList.flush();
                 rendering = false;
                 name.ifPresent(s -> Iris.getIrisConfig().setShaderPackName(s));
