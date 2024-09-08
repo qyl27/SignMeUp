@@ -13,7 +13,7 @@ public class MiniMap implements TConfig {
         return "SignMeUp";
     }
 
-    private int coverRange = 64;
+    private int coverRange = 96;
     public boolean followPlayerRotation = true;
 
     public int getCoverRange() {

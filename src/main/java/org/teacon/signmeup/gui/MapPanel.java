@@ -25,8 +25,8 @@ public class MapPanel extends TVerticalAndHorizontalScrollContainer {
     public void layout() {
         int mapSize = (int) (getUsableHeight() * size);
         map.setBounds(
-                Math.max((width - mapSize) / 2, 0),
-                Math.max((height - mapSize) / 2, 0),
+                Math.max((getUsableWidth() - mapSize) / 2, 0),
+                Math.max((getUsableHeight() - mapSize) / 2, 0),
                 mapSize, mapSize);
         super.layout();
     }
@@ -47,15 +47,17 @@ public class MapPanel extends TVerticalAndHorizontalScrollContainer {
         float newScrollY = centerY * map.getHeight() - getUsableHeight() / 2f;
         initPos();
         if (isScrollBarVisibleHorizontal()) {
-            //this.scrollAmountX = Mth.clamp(newScrollX, 0, getMaxScrollX());
+            //this.prevScrollAmountX = this.scrollAmountX;
+            this.prevScrollAmountX =this.scrollAmountX = Mth.clamp(newScrollX, 0, getMaxScrollX());
         } else {
-            this.scrollAmountX = 0;
+            this.prevScrollAmountX =this.scrollAmountX = 0;
         }
 
         if (isScrollBarVisibleVertical()) {
-            //this.scrollAmountY = Mth.clamp(newScrollY, 0, getMaxScrollY());
+            //this.prevScrollAmountY = this.scrollAmountY;
+            this.prevScrollAmountY =this.scrollAmountY = Mth.clamp(newScrollY, 0, getMaxScrollY());
         } else {
-            this.scrollAmountY = 0;
+            this.prevScrollAmountY =this.scrollAmountY = 0;
         }
     }
 

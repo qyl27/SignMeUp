@@ -17,6 +17,7 @@ import org.teacon.signmeup.config.Waypoints;
 public class SignMeUp {
     public static final String MODID = "sign_up";
     public static final boolean IS_SODIUM_INSTALLED = ModList.get().isLoaded("sodium");
+    public static final int MAIN_COLOR = 0x14b8a6;
 
     public SignMeUp(IEventBus modEventBus, ModContainer modContainer) {
         ConfigHelper.loadConfig(new PlayerCommands());
