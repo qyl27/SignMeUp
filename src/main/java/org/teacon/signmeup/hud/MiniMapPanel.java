@@ -43,7 +43,7 @@ import static org.lwjgl.opengl.GL40C.*;
  */
 public class MiniMapPanel extends TPanel {
     public static final ObjectArrayList<SectionRenderDispatcher.RenderSection> VISIBLE_SECTIONS = new ObjectArrayList<>(10000);
-    private static int minimapSize, FBO, COLOR, DEPTH;
+    private static int minimapSize, minimapFrameSize, FBO, COLOR, DEPTH;
     private static final Matrix4f MODEL_VIEW_MATRIX = new Matrix4f();
     private static final Matrix4f PROJECTION_MATRIX = new Matrix4f();
     private static final Quaternionf QUATERNION = new Quaternionf();
@@ -51,8 +51,7 @@ public class MiniMapPanel extends TPanel {
     public static boolean rendering = false;
 
     static {
-        var window = Minecraft.getInstance().getWindow();
-        minimapSize = (int) (window.getHeight() * 0.236);
+        calculateMinimapSize();
         initOpenGL();
     }
 
@@ -62,13 +61,13 @@ public class MiniMapPanel extends TPanel {
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
         COLOR = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, COLOR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, minimapSize, minimapSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, minimapFrameSize, minimapFrameSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, COLOR, 0);
         DEPTH = glGenRenderbuffers();
         glBindRenderbuffer(GL_RENDERBUFFER, DEPTH);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, minimapSize, minimapSize);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, minimapFrameSize, minimapFrameSize);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, DEPTH);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glBindRenderbuffer(GL_RENDERBUFFER, 0);
@@ -78,11 +77,19 @@ public class MiniMapPanel extends TPanel {
     public MiniMapPanel() {
     }
 
+    private static void calculateMinimapSize() {
+        var window = Minecraft.getInstance().getWindow();
+        minimapSize = (int) (window.getHeight() * 0.236);
+        minimapFrameSize = (int) (minimapSize * ConfigHelper.getConfigRead(MiniMap.class).ssaaRatio);
+    }
+
     @Override
     public void resizeAsHud(int screenWidth, int screenHeight) {
         this.setAbsBounds(0, 0, screenWidth, screenHeight);
-        var window = Minecraft.getInstance().getWindow();
-        minimapSize = (int) (window.getHeight() * 0.236);
+        calculateMinimapSize();
+        glDeleteFramebuffers(FBO);
+        glDeleteTextures(COLOR);
+        glDeleteRenderbuffers(DEPTH);
         initOpenGL();
         super.resizeAsHud(screenWidth, screenHeight);
     }
@@ -99,7 +106,7 @@ public class MiniMapPanel extends TPanel {
         var camera = minecraft.gameRenderer.getMainCamera();
         var pos = camera.getPosition();
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
-        glViewport(0, 0, minimapSize, minimapSize);
+        glViewport(0, 0, minimapFrameSize, minimapFrameSize);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         Frustum frustum = new Frustum(MODEL_VIEW_MATRIX, PROJECTION_MATRIX);
         if (SignMeUp.IS_SODIUM_INSTALLED) {
@@ -201,7 +208,7 @@ public class MiniMapPanel extends TPanel {
         //noinspection DataFlowIssue
         shaderinstance.setDefaultUniforms(VertexFormat.Mode.QUADS, MODEL_VIEW_MATRIX, PROJECTION_MATRIX, minecraft.getWindow());
         if (shaderinstance.SCREEN_SIZE != null) {
-            shaderinstance.SCREEN_SIZE.set(minimapSize, minimapSize);
+            shaderinstance.SCREEN_SIZE.set(minimapFrameSize, minimapFrameSize);
         }
         shaderinstance.apply();
         Uniform uniform = shaderinstance.CHUNK_OFFSET;

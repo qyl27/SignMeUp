@@ -5,5 +5,6 @@
 
   "gui.sign_up.minimap": "  Minimap",
   "gui.sign_up.minimap.range": "Minimap Range",
-  "gui.sign_up.minimap.rotate": "Follow Player Rotating"
+  "gui.sign_up.minimap.rotate": "Follow Player Rotating",
+  "gui.sign_up.minimap.ssaa": "SSAA Ratio"
 }

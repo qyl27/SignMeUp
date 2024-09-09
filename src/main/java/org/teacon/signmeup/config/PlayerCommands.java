@@ -16,7 +16,8 @@ public class PlayerCommands implements TConfig {
     public ArrayList<Command> waypoints = new ArrayList<>();
 
     public static class Command{
-        public final String name = "";
-        public final String command = "";
+        public final String title = "";
+        public final String tooltip = "";
+        public final ArrayList<String> commands = new ArrayList<>();
     }
 }

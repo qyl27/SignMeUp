@@ -15,6 +15,7 @@ public class MiniMap implements TConfig {
 
     private int coverRange = 96;
     public boolean followPlayerRotation = true;
+    public float ssaaRatio = 1.5f;
 
     public int getCoverRange() {
         return Mth.clamp(coverRange, 8, 256);
