@@ -18,6 +18,7 @@ public class MapScreen extends TScreen {
     private final TImageButton settingsButton = new TImageButton(TImage.PLACEHOLDER_IMAGE, button -> {
         ClientHooks.pushGuiLayer(Minecraft.getInstance(), new SettingsScreen());
     }, 0x80ffffff, 0xff000000 + SignMeUp.MAIN_COLOR);
+    private final CommandsPanel commandsPanel = new CommandsPanel();
 
 
     public static MapScreen getNewInstance() {
@@ -33,12 +34,18 @@ public class MapScreen extends TScreen {
         super(Component.literal("Map Screen"));
         this.add(mapPanel);
         this.add(settingsButton);
+        this.add(commandsPanel);
     }
 
     @Override
     public void layout() {
         mapPanel.setBounds(0, 0, width, height);
         settingsButton.setBounds(10, 10, 20, 20);
+        var commandsPanelSize = commandsPanel.getPreferredSize();
+        commandsPanel.setBounds(
+                width - commandsPanelSize.x,
+                (height - commandsPanelSize.y) / 2,
+                commandsPanelSize);
         super.layout();
     }
 }
