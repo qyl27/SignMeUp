@@ -4,6 +4,9 @@
   "key.sign_up.open_new_map": "New Map Instance",
 
   "gui.sign_up.minimap": "  Minimap",
+  "gui.sign_up.minimap.minimap": "Minimap",
+  "gui.sign_up.minimap.minimap.on": "On",
+  "gui.sign_up.minimap.minimap.off": "Off",
   "gui.sign_up.minimap.range": "Minimap Range",
   "gui.sign_up.minimap.rotate": "Follow Player Rotating",
   "gui.sign_up.minimap.ssaa": "SSAA Ratio"

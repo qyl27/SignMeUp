@@ -17,8 +17,8 @@ public class Waypoints implements TConfig {
     public LinkedHashSet<WayPoint> waypoints = new LinkedHashSet<>();
 
     public static class WayPoint {
-        public final String name, description;
-        public final int x, y, z;
+        public String name, description;
+        public int x, y, z;
 
         public WayPoint(String name, String description, int x, int y, int z) {
             this.name = name;

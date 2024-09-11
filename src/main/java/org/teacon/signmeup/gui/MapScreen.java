@@ -19,6 +19,7 @@ public class MapScreen extends TScreen {
         ClientHooks.pushGuiLayer(Minecraft.getInstance(), new SettingsScreen());
     }, 0x80ffffff, 0xff000000 + SignMeUp.MAIN_COLOR);
     private final CommandsPanel commandsPanel = new CommandsPanel();
+    private final WayPointsPanel wayPointsPanel = new WayPointsPanel();
 
 
     public static MapScreen getNewInstance() {
@@ -35,6 +36,7 @@ public class MapScreen extends TScreen {
         this.add(mapPanel);
         this.add(settingsButton);
         this.add(commandsPanel);
+        this.add(wayPointsPanel);
     }
 
     @Override
@@ -46,6 +48,11 @@ public class MapScreen extends TScreen {
                 width - commandsPanelSize.x,
                 (height - commandsPanelSize.y) / 2,
                 commandsPanelSize);
+        var wayPointsPanelSize = wayPointsPanel.getPreferredSize();
+        wayPointsPanel.setBounds(
+                0,
+                (height - wayPointsPanelSize.y) / 2,
+                wayPointsPanelSize);
         super.layout();
     }
 }
