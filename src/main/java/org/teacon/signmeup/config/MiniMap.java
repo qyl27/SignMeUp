@@ -18,7 +18,7 @@ public class MiniMap implements TConfig {
     public float ssaaRatio = 1.5f;
 
     public int getCoverRange() {
-        return Mth.clamp(coverRange, 8, 256);
+        return Mth.clamp(coverRange, 8, 320);
     }
 
     public void setCoverRange(int coverRange) {

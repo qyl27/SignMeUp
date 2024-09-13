@@ -36,7 +36,7 @@ public class SettingsScreen extends TScreen {
         settingsPanel.addOptionCycleButtonInit(Component.translatable("gui.sign_up.minimap.rotate"), List.of(Boolean.TRUE, Boolean.FALSE),
                 bool -> button -> ConfigHelper.getConfigWrite(MiniMap.class, miniMap -> miniMap.followPlayerRotation = button.getSelected().getContent()),
                 entry -> entry.getContent() == ConfigHelper.getConfigRead(MiniMap.class).followPlayerRotation);
-        settingsPanel.addOptionSliderDoubleInit(Component.translatable("gui.sign_up.minimap.range"), 8, 256,
+        settingsPanel.addOptionSliderDoubleInit(Component.translatable("gui.sign_up.minimap.range"), 8, 320,
                 (component, value) -> Component.literal(String.format("%d", value.intValue())),
                 null,
                 (slider, value) -> ConfigHelper.getConfigWrite(MiniMap.class, miniMap -> miniMap.setCoverRange((int) slider.getAbsValue())),
