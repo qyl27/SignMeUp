@@ -6,29 +6,32 @@ import cn.ussshenzhou.t88.gui.container.TVerticalScrollContainer;
 import cn.ussshenzhou.t88.network.NetworkHelper;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import org.joml.Vector2i;
-import org.teacon.signmeup.config.PlayerCommands;
-import org.teacon.signmeup.network.PerformCommandPacket;
+import org.teacon.signmeup.SignMeUp;
+import org.teacon.signmeup.config.Waypoints;
+import org.teacon.signmeup.network.TeleportToWayPointPacket;
 
 /**
  * @author USS_Shenzhou
  */
-public class CommandsPanel extends TVerticalScrollContainer {
+public class WayPointsButtonPanel extends TVerticalScrollContainer {
 
-    public CommandsPanel() {
+    public WayPointsButtonPanel() {
         super();
-        ConfigHelper.getConfigRead(PlayerCommands.class).playerCommands.forEach(command -> {
-            var button = new THoverSensitiveImageButton(Component.literal(command.title),
+        ConfigHelper.getConfigRead(Waypoints.class).waypoints.forEach(wayPoint -> {
+            var button = new THoverSensitiveImageButton(Component.literal(wayPoint.name),
                     b -> {
-                        NetworkHelper.sendToServer(new PerformCommandPacket(command.title));
+                        NetworkHelper.sendToServer(new TeleportToWayPointPacket(wayPoint.name));
                         getTopParentScreenOptional().ifPresent(tScreen -> tScreen.onClose(false));
                     },
-                    null,
-                    null);
-            button.setPadding(1);
-            button.setTooltip(Tooltip.create(Component.literal(command.tooltip)));
+                    ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID,"textures/gui/button_panel_button.png"),
+                    ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID,"textures/gui/button_panel_button_hovered.png"));
+            button.setPadding(0);
+            button.setTooltip(Tooltip.create(Component.literal(wayPoint.description)));
             this.add(button);
         });
+        this.setBackground(0xaa564149);
     }
 
     @Override

@@ -2,23 +2,36 @@ package org.teacon.signmeup.gui;
 
 import cn.ussshenzhou.t88.config.ConfigHelper;
 import cn.ussshenzhou.t88.gui.container.TVerticalAndHorizontalScrollContainer;
-import cn.ussshenzhou.t88.gui.util.Border;
 import cn.ussshenzhou.t88.gui.util.ImageFit;
 import cn.ussshenzhou.t88.gui.widegt.TImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import org.joml.Quaternionf;
 import org.joml.Vector2f;
 import org.teacon.signmeup.SignMeUp;
 import org.teacon.signmeup.config.Map;
+
+import static net.minecraft.util.Mth.PI;
 
 /**
  * @author USS_Shenzhou
  */
 public class MapPanel extends TVerticalAndHorizontalScrollContainer {
     private final TImage map = new TImage(ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "textures/gui/map.png"));
-    private final TImage me = new TImage(PLACEHOLDER_IMAGE);
+    private static final Quaternionf QUATERNION = new Quaternionf();
+    private final TImage me = new TImage(ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "textures/gui/me_map.png")) {
+        @Override
+        public void render(GuiGraphics guigraphics, int pMouseX, int pMouseY, float pPartialTick) {
+            guigraphics.pose().pushPose();
+            var camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+            QUATERNION.identity().rotateZ(PI + camera.getYRot() * PI / 180);
+            guigraphics.pose().last().pose().rotateAround(QUATERNION, x + 16, y + 16, 0);
+            super.render(guigraphics, pMouseX, pMouseY, pPartialTick);
+            guigraphics.pose().popPose();
+        }
+    };
 
     private float size = 1.5f;
 
@@ -26,7 +39,6 @@ public class MapPanel extends TVerticalAndHorizontalScrollContainer {
         map.setImageFit(ImageFit.STRETCH);
         this.add(map);
         this.add(me);
-        me.setBorder(new Border(0xffff0000, 3));
     }
 
     private Vector2f worldToGui(double x, double z) {
@@ -53,7 +65,7 @@ public class MapPanel extends TVerticalAndHorizontalScrollContainer {
     private void locateMe() {
         var camera = Minecraft.getInstance().gameRenderer.getMainCamera();
         var mePos = worldToGui(camera.getBlockPosition().getX(), camera.getBlockPosition().getZ());
-        me.setBounds((int) mePos.x, (int) mePos.y, 0, 0);
+        me.setBounds((int) mePos.x - 16, (int) mePos.y - 16, 32, 32);
     }
 
 

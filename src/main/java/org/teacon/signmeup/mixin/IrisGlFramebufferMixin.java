@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.teacon.signmeup.hud.MiniMapPanel;
+import org.teacon.signmeup.hud.InnerMiniMapPanel;
 
 /**
  * @author USS_Shenzhou
@@ -16,7 +16,7 @@ public class IrisGlFramebufferMixin {
 
     @Inject(method = "bind", at = @At("HEAD"), cancellable = true)
     private void t88CancelBindWhenRenderingMiniMap(CallbackInfo ci) {
-        if (MiniMapPanel.rendering) {
+        if (InnerMiniMapPanel.rendering) {
             ci.cancel();
         }
     }

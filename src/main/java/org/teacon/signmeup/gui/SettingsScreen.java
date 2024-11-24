@@ -6,6 +6,7 @@ import cn.ussshenzhou.t88.gui.advanced.TOptionsPanel;
 import cn.ussshenzhou.t88.gui.screen.TScreen;
 import net.minecraft.network.chat.Component;
 import org.teacon.signmeup.config.MiniMap;
+import org.teacon.signmeup.hud.InnerMiniMapPanel;
 import org.teacon.signmeup.hud.MiniMapPanel;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class SettingsScreen extends TScreen {
         settingsPanel.addOptionCycleButtonInit(Component.translatable("gui.sign_up.minimap.minimap"), List.of(
                         "gui.sign_up.minimap.minimap.on",
                         "gui.sign_up.minimap.minimap.off"
+                //TODO render-preset-off
                 ),
                 List.of(
                         button -> HudManager.addIfSameClassNotExist(new MiniMapPanel()),
@@ -49,7 +51,7 @@ public class SettingsScreen extends TScreen {
                 (slider, value) -> {
                     ConfigHelper.getConfigWrite(MiniMap.class, miniMap -> miniMap.ssaaRatio = (float) (Math.round(slider.getAbsValue() * 10) / 10.0));
                     HudManager.getChildren().stream()
-                            .filter(tComponent -> tComponent instanceof MiniMapPanel)
+                            .filter(tComponent -> tComponent instanceof InnerMiniMapPanel)
                             .findFirst()
                             .ifPresent(minimap -> minimap.resizeAsHud(this.getRectangle().width(), this.getRectangle().height()));
                 },

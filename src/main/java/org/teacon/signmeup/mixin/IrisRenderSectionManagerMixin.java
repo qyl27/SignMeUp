@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.teacon.signmeup.hud.MiniMapPanel;
+import org.teacon.signmeup.hud.InnerMiniMapPanel;
 
 /**
  * @author USS_Shenzhou
@@ -18,7 +18,7 @@ public abstract class IrisRenderSectionManagerMixin {
 
     @Redirect(method = "createTerrainRenderList", at = @At(value = "INVOKE", target = "Lnet/caffeinemc/mods/sodium/client/render/chunk/RenderSectionManager;getSearchDistance()F"), require = 0)
     private float t88DisableDistanceLimitWhenRenderingMiniMap(RenderSectionManager instance) {
-        if (MiniMapPanel.rendering) {
+        if (InnerMiniMapPanel.rendering) {
             return 1000;
         }
         return this.getSearchDistance();

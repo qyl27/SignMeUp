@@ -159,8 +159,8 @@ dependencies {
 
     //implementation "curse.maven:irisshaders-455508:5663587"
     // Example mod dependency using a file as dependency
-    implementation files("libs/sodium-neoforge-0.6.0-beta.1+mc1.21.jar")
-    implementation "curse.maven:irisshaders-455508:5663587"
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "curse.maven:irisshaders-455508:5765375"
     // Example project dependency using a sister or child project:
     // implementation project(":myproject")
 

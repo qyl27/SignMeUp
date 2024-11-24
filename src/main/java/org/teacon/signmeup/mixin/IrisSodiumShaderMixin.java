@@ -5,7 +5,7 @@ import net.irisshaders.iris.pipeline.programs.SodiumShader;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.teacon.signmeup.hud.MiniMapPanel;
+import org.teacon.signmeup.hud.InnerMiniMapPanel;
 
 /**
  * @author USS_Shenzhou
@@ -15,7 +15,7 @@ public class IrisSodiumShaderMixin {
 
     @Redirect(method = "resetState", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/pipeline/RenderTarget;bindWrite(Z)V"))
     private void t88CancelBindWhenRenderingMiniMap(RenderTarget instance, boolean setViewport) {
-        if (!MiniMapPanel.rendering) {
+        if (!InnerMiniMapPanel.rendering) {
             instance.bindWrite(setViewport);
         }
     }
