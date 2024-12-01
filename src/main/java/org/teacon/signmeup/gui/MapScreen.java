@@ -48,7 +48,7 @@ public class MapScreen extends TScreen {
         settingsButton.setBounds(10, 10, 20, 20);
         var commandsPanelSize = commandsButtonPanel.getPreferredSize();
         commandsButtonPanel.setBounds(
-                width - commandsPanelSize.x,
+                width - commandsPanelSize.x - 6,
                 (height - commandsPanelSize.y) / 2,
                 commandsPanelSize);
         var wayPointsPanelSize = wayPointsButtonPanel.getPreferredSize();

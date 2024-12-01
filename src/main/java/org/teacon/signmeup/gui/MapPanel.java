@@ -86,7 +86,7 @@ public class MapPanel extends TVerticalAndHorizontalScrollContainer {
     }
 
     private void zoom(float delta) {
-        delta *= 0.2f;
+        delta *= 0.275f;
         float newSize = Mth.clamp(size + delta, 0.75f, 10);
         float centerX = (float) (scrollAmountX + getUsableWidth() / 2f) / map.getWidth();
         float centerY = (float) (scrollAmountY + getUsableHeight() / 2f) / map.getHeight();
