@@ -48,7 +48,7 @@ public class MiniMapPanel extends TPanel {
         innerMiniMap.setAbsBounds(0, 0, screenWidth, screenHeight);
         super.resizeAsHud(screenWidth, screenHeight);
         var scale = Minecraft.getInstance().getWindow().getGuiScale();
-        var minimapSize = InnerMiniMapPanel.getMinimapScreenSize() + scale / 2;
+        var minimapSize = InnerMiniMapPanel.getMinimapScreenSize();
         background.setAbsBounds(
                 (int) ((innerMiniMap.screenX1() - minimapSize / 13f / 2) / scale),
                 (int) ((innerMiniMap.screenY1() - minimapSize / 13f * 1.9) / scale),

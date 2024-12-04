@@ -79,7 +79,7 @@ public class InnerMiniMapPanel extends TPanel {
 
     private static void calculateMinimapSize() {
         var window = Minecraft.getInstance().getWindow();
-        minimapSize = (int) (window.getHeight() * 0.236);
+        minimapSize = (int) (((int) (window.getHeight() * 0.236 / guiScale())) * guiScale());
         minimapFrameSize = (int) (minimapSize * ConfigHelper.getConfigRead(MiniMap.class).ssaaRatio);
     }
 
@@ -182,20 +182,24 @@ public class InnerMiniMapPanel extends TPanel {
         graphics.pose().popPose();
     }
 
+    private static float guiScale() {
+        return (float) Minecraft.getInstance().getWindow().getGuiScale();
+    }
+
     protected float screenX1() {
-        return Minecraft.getInstance().getWindow().getWidth() * 0.95f - minimapSize;
+        return x1() * guiScale();
     }
 
     protected float screenX2() {
-        return screenX1() + minimapSize;
+        return x2() * guiScale();
     }
 
     protected float screenY1() {
-        return Minecraft.getInstance().getWindow().getHeight() * 0.05f;
+        return y1() * guiScale();
     }
 
     protected float screenY2() {
-        return screenY1() + minimapSize;
+        return y2() * guiScale();
     }
 
     public static int getMinimapScreenSize() {
@@ -203,23 +207,23 @@ public class InnerMiniMapPanel extends TPanel {
     }
 
     public static int getMinimapSize() {
-        return (int) (minimapSize / Minecraft.getInstance().getWindow().getGuiScale());
+        return (int) (minimapSize / guiScale());
     }
 
     protected int x1() {
-        return (int) (screenX1() / Minecraft.getInstance().getWindow().getGuiScale());
+        return (int) ((Minecraft.getInstance().getWindow().getWidth() * 0.95f - minimapSize) / guiScale());
     }
 
     protected int x2() {
-        return (int) (screenX2() / Minecraft.getInstance().getWindow().getGuiScale());
+        return x1() + getMinimapSize();
     }
 
     protected int y1() {
-        return (int) (screenY1() / Minecraft.getInstance().getWindow().getGuiScale());
+        return (int) (Minecraft.getInstance().getWindow().getHeight() * 0.05f / guiScale());
     }
 
     protected int y2() {
-        return (int) (screenY2() / Minecraft.getInstance().getWindow().getGuiScale());
+        return y1() + getMinimapSize();
     }
 
     private static void prepare(Minecraft minecraft) {
