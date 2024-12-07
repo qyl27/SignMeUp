@@ -24,3 +24,6 @@ runs
 run-data
 
 repo
+
+!/run/config/SignMeUp
+!/run/saves/TeaCon JiaChen
