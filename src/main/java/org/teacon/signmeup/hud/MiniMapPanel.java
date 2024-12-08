@@ -43,6 +43,13 @@ public class MiniMapPanel extends TPanel {
     }
 
     @Override
+    public void tickT() {
+        super.tickT();
+        var debugOn = Minecraft.getInstance().getDebugOverlay().showDebugScreen();
+        children.forEach(childTComponent -> childTComponent.setVisibleT(!debugOn));
+    }
+
+    @Override
     public void resizeAsHud(int screenWidth, int screenHeight) {
         innerMiniMap.setAbsBounds(0, 0, screenWidth, screenHeight);
         super.resizeAsHud(screenWidth, screenHeight);
