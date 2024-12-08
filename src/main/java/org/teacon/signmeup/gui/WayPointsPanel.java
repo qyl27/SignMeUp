@@ -10,12 +10,11 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import org.joml.Vector2i;
 import org.teacon.signmeup.SignMeUp;
 import org.teacon.signmeup.config.Waypoints;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -32,6 +31,28 @@ public class WayPointsPanel extends TPanel {
 
     private int getMergeRange() {
         return (int) (DOT_SIZE * 0.75);
+    }
+
+    public List<Waypoints.WayPoint> getHighlightWaypoints(double mouseX, double mouseY) {
+        for (WayPointDot dot : visualWayPoints) {
+            if (dot.isVisibleT() && dot.isInRange(mouseX, mouseY)) {
+                return dot.getLogicWaypoints();
+            }
+        }
+
+        return List.of();
+    }
+
+    public Vector2i lookupWaypoint(String waypoint) {
+        for (WayPointDot dot : visualWayPoints) {
+            List<Waypoints.WayPoint> ps = dot.getLogicWaypoints();
+            for (Waypoints.WayPoint p : ps) {
+                if (p.name.equals(waypoint)) {
+                    return new Vector2i(dot.getXT() + dot.getWidth() / 2, dot.getYT() + dot.getHeight() / 2);
+                }
+            }
+        }
+        return null;
     }
 
     protected void update() {
@@ -71,10 +92,14 @@ public class WayPointsPanel extends TPanel {
         return ((dot1.getXT() - 16) - (dot2.getXT() - 16)) * ((dot1.getXT() - 16) - (dot2.getXT() - 16)) + ((dot1.getYT() - 16) - (dot2.getYT() - 16)) * ((dot1.getYT() - 16) - (dot2.getYT() - 16));
     }
 
-    public static class WayPointDot extends TImage {
+    public class WayPointDot extends TImage {
 
         public WayPointDot(ResourceLocation imageLocation) {
             super(imageLocation);
+        }
+
+        public List<Waypoints.WayPoint> getLogicWaypoints() {
+            return List.of(logicWaypoints.inverse().get(this));
         }
     }
 
@@ -88,6 +113,11 @@ public class WayPointsPanel extends TPanel {
             number.setHorizontalAlignment(HorizontalAlignment.CENTER);
             //TODO
             number.setFontSize(TLabel.STD_FONT_SIZE * 0.75f);
+        }
+
+        @Override
+        public List<Waypoints.WayPoint> getLogicWaypoints() {
+            return Collections.unmodifiableList(containedWaypoints);
         }
 
         @Override

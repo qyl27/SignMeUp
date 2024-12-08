@@ -5,6 +5,7 @@ import cn.ussshenzhou.t88.gui.container.TVerticalAndHorizontalScrollContainer;
 import cn.ussshenzhou.t88.gui.util.ImageFit;
 import cn.ussshenzhou.t88.gui.util.LayoutHelper;
 import cn.ussshenzhou.t88.gui.widegt.TImage;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
@@ -14,6 +15,9 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.teacon.signmeup.SignMeUp;
 import org.teacon.signmeup.config.Map;
+import org.teacon.signmeup.config.Waypoints;
+
+import java.util.List;
 
 import static net.minecraft.util.Mth.PI;
 
@@ -21,6 +25,9 @@ import static net.minecraft.util.Mth.PI;
  * @author USS_Shenzhou
  */
 public class MapPanel extends TVerticalAndHorizontalScrollContainer {
+    private static final ResourceLocation SCROLLER_VERTICAL = ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "scrollbar_vert");
+    private static final ResourceLocation SCROLLER_HORIZONTAL = ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "scrollbar_hori");
+
     protected final InnerMapPanel map = new InnerMapPanel();
     private static final Quaternionf QUATERNION = new Quaternionf();
     private final TImage me = new TImage(ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "textures/gui/me_map.png")) {
@@ -34,6 +41,7 @@ public class MapPanel extends TVerticalAndHorizontalScrollContainer {
             guigraphics.pose().popPose();
         }
     };
+
     private final WayPointsPanel wayPointsPanel = new WayPointsPanel();
 
     private float size = 1.5f;
@@ -57,6 +65,52 @@ public class MapPanel extends TVerticalAndHorizontalScrollContainer {
         me.setBounds(mePos.x - 16, mePos.y - 16, 32, 32);
     }
 
+    private static final ResourceLocation ARROW_OUTER = ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "textures/gui/arrow_outer.png");
+
+    @Override
+    public void render(GuiGraphics guigraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        super.render(guigraphics, pMouseX, pMouseY, pPartialTick);
+
+        MapScreen s = (MapScreen) getTopParentScreen();
+        if (s == null) {
+            return;
+        }
+
+        String waypoint = s.getHighlightWaypoints();
+        if (waypoint == null) {
+            return;
+        }
+        Vector2i v = wayPointsPanel.lookupWaypoint(waypoint);
+        int px = (int) (v.x - scrollAmountX), py = (int) (v.y - scrollAmountY);
+        int gw = guigraphics.guiWidth(), gh = guigraphics.guiHeight();
+        if (px >= 0 && px < gw && py >= 0 && py < gh) {
+            guigraphics.fill(0, py - 1, gw, py + 1, 0xFFE8DDCD);
+            guigraphics.fill(px - 1, 0, px + 1, gh, 0xFFE8DDCD);
+        } else {
+            guigraphics.pose().pushPose();
+
+            double bx = 100, by = 20;
+            double dx = px - gw / 2D, dy = py - gh / 2D, tan = dx / dy;
+            double ax = tan * (gh / 2D - by) + gw / 2D, ay;
+            if (ax <= bx || ax >= gw - bx) {
+                ay = (gw / 2D - bx) / tan + gh / 2D;
+                ax = dx > 0 ? gw - bx : bx;
+            } else {
+                ay = dy > 0 ? gh - by : by;
+            }
+            QUATERNION.identity().rotateZ((float) (-Math.atan(tan) + (dy > 0 ? Math.PI : 0D)));
+            guigraphics.pose().last().pose().rotateAround(QUATERNION, (float)(ax + 16), (float) (ay + 6), 0);
+
+            RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+            RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
+            RenderSystem.enableDepthTest();
+            guigraphics.blit(ARROW_OUTER, (int) ax, (int) ay, 32, 32, 0F, 0F, 32, 32, 32, 32);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+            guigraphics.pose().popPose();
+        }
+    }
 
     @Override
     public void layout() {
@@ -69,11 +123,6 @@ public class MapPanel extends TVerticalAndHorizontalScrollContainer {
         locateMe();
         wayPointsPanel.update();
         super.layout();
-    }
-
-    @Override
-    public void render(GuiGraphics guigraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        super.render(guigraphics, pMouseX, pMouseY, pPartialTick);
     }
 
     private void zoom(float delta) {
@@ -114,6 +163,20 @@ public class MapPanel extends TVerticalAndHorizontalScrollContainer {
         } else {
             return false;
         }
+    }
+
+    @Override
+    protected ResourceLocation getScrollerHorizontalTexture() {
+        return SCROLLER_HORIZONTAL;
+    }
+
+    @Override
+    protected ResourceLocation getScrollerVerticalTexture() {
+        return SCROLLER_VERTICAL;
+    }
+
+    public List<Waypoints.WayPoint> getHighlightWaypoints(double pMouseX, double pMouseY) {
+        return wayPointsPanel.getHighlightWaypoints(pMouseX + scrollAmountX, pMouseY + scrollAmountY);
     }
 
     public static class InnerMapPanel extends TImage {

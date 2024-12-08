@@ -16,7 +16,7 @@ import org.teacon.signmeup.network.PerformCommandPacket;
 public class CommandsButtonPanel extends ButtonPanel {
 
     public CommandsButtonPanel() {
-        super();
+        super(false);
         ConfigHelper.getConfigRead(PlayerCommands.class).playerCommands.forEach(command -> {
             var button = new THoverSensitiveImageButton(Component.literal(command.title),
                     b -> {

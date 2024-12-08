@@ -14,7 +14,6 @@ import net.caffeinemc.mods.sodium.client.render.SodiumWorldRenderer;
 import net.caffeinemc.mods.sodium.client.render.chunk.ChunkRenderMatrices;
 import net.caffeinemc.mods.sodium.client.render.chunk.DefaultChunkRenderer;
 import net.caffeinemc.mods.sodium.client.render.chunk.RenderSectionManager;
-import net.caffeinemc.mods.sodium.client.render.chunk.ShaderChunkRenderer;
 import net.caffeinemc.mods.sodium.client.render.chunk.terrain.DefaultTerrainRenderPasses;
 import net.caffeinemc.mods.sodium.client.render.chunk.vertex.format.ChunkVertexType;
 import net.caffeinemc.mods.sodium.client.render.viewport.Viewport;
@@ -25,7 +24,6 @@ import net.irisshaders.iris.uniforms.CapturedRenderingState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.chunk.SectionRenderDispatcher;
@@ -110,19 +108,9 @@ public class InnerMiniMapPanel extends TPanel {
         Frustum frustum = new Frustum(MODEL_VIEW_MATRIX, PROJECTION_MATRIX);
         if (SignMeUp.IS_SODIUM_INSTALLED) {
             try {
-                @SuppressWarnings("JavaReflectionMemberAccess")
-                var sodiumWorldRendererField = LevelRenderer.class.getDeclaredField("renderer");
-                sodiumWorldRendererField.setAccessible(true);
-                var sodiumWorldRenderer = (SodiumWorldRenderer) sodiumWorldRendererField.get(minecraft.levelRenderer);
-                var renderSectionManagerField = SodiumWorldRenderer.class.getDeclaredField("renderSectionManager");
-                renderSectionManagerField.setAccessible(true);
-                var renderSectionManager = (RenderSectionManager) renderSectionManagerField.get(sodiumWorldRenderer);
-                var chunkRendererField = RenderSectionManager.class.getDeclaredField("chunkRenderer");
-                chunkRendererField.setAccessible(true);
-                var shaderChunkRenderer = (ShaderChunkRenderer) chunkRendererField.get(renderSectionManager);
-                var vertexTypeField = ShaderChunkRenderer.class.getDeclaredField("vertexType");
-                vertexTypeField.setAccessible(true);
-                var vertexType = (ChunkVertexType) vertexTypeField.get(shaderChunkRenderer);
+                SodiumWorldRenderer sodiumWorldRenderer = SodiumAccess.getWorldRenderer();
+                RenderSectionManager renderSectionManager = SodiumAccess.getRenderSectionManager(sodiumWorldRenderer);
+                ChunkVertexType vertexType = SodiumAccess.getChunkVertexType(renderSectionManager);
                 var projectionMatrixTmp = RenderSystem.getProjectionMatrix();
 
                 RenderSystem.setProjectionMatrix(PROJECTION_MATRIX, RenderSystem.getVertexSorting());
@@ -152,7 +140,7 @@ public class InnerMiniMapPanel extends TPanel {
                 CapturedRenderingState.INSTANCE.setGbufferModelView(gbufferModelViewTmp);
                 camera.setPosition(pos);
                 RenderSystem.setProjectionMatrix(projectionMatrixTmp, RenderSystem.getVertexSorting());
-            } catch (NoSuchFieldException | IllegalAccessException e) {
+            } catch (Throwable e) {
                 if (T88.TEST) {
                     throw new RuntimeException(e);
                 }

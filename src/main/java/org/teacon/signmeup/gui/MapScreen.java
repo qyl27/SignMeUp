@@ -3,9 +3,11 @@ package org.teacon.signmeup.gui;
 import cn.ussshenzhou.t88.gui.advanced.THoverSensitiveImageButton;
 import cn.ussshenzhou.t88.gui.screen.TScreen;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.ClientHooks;
+import org.joml.Vector2i;
 import org.teacon.signmeup.SignMeUp;
 
 /**
@@ -16,9 +18,7 @@ public class MapScreen extends TScreen {
 
     private final MapPanel mapPanel = new MapPanel();
     private final THoverSensitiveImageButton settingsButton = new THoverSensitiveImageButton(Component.empty(),
-            button -> {
-                ClientHooks.pushGuiLayer(Minecraft.getInstance(), new SettingsScreen());
-            },
+            button -> ClientHooks.pushGuiLayer(Minecraft.getInstance(), new SettingsScreen()),
             ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "textures/gui/setting.png"),
             ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "textures/gui/setting_hovered.png"));
     private final CommandsButtonPanel commandsButtonPanel = new CommandsButtonPanel();
@@ -40,6 +40,17 @@ public class MapScreen extends TScreen {
         this.add(settingsButton);
         this.add(commandsButtonPanel);
         this.add(wayPointsButtonPanel);
+    }
+
+    @Override
+    public void render(GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
+        super.render(graphics, pMouseX, pMouseY, pPartialTick);
+
+        wayPointsButtonPanel.highlight(mapPanel.getHighlightWaypoints(pMouseX, pMouseY));
+    }
+
+    public String getHighlightWaypoints() {
+        return wayPointsButtonPanel.getHighlightWaypoints();
     }
 
     @Override
