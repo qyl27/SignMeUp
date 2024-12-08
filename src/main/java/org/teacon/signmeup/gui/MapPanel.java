@@ -7,7 +7,6 @@ import cn.ussshenzhou.t88.gui.util.LayoutHelper;
 import cn.ussshenzhou.t88.gui.widegt.TImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.joml.Quaternionf;
 import org.joml.Vector2f;
@@ -23,7 +22,7 @@ import static net.minecraft.util.Mth.PI;
 public class MapPanel extends TVerticalAndHorizontalScrollContainer {
     protected final InnerMapPanel map = new InnerMapPanel();
     private static final Quaternionf QUATERNION = new Quaternionf();
-    private final TImage me = new TImage(ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "textures/gui/me_map.png")) {
+    private final TImage me = new TImage(SignMeUp.id("textures/gui/me_map.png")) {
         @Override
         public void render(GuiGraphics guigraphics, int pMouseX, int pMouseY, float pPartialTick) {
             guigraphics.pose().pushPose();
@@ -118,7 +117,7 @@ public class MapPanel extends TVerticalAndHorizontalScrollContainer {
 
     public static class InnerMapPanel extends TImage {
         public InnerMapPanel() {
-            super(ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "textures/gui/map.png"));
+            super(SignMeUp.id("textures/gui/map.png"));
         }
 
         public Vector2i worldToGui(double x, double z) {

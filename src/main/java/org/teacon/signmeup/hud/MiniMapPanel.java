@@ -6,7 +6,6 @@ import cn.ussshenzhou.t88.gui.widegt.TImage;
 import cn.ussshenzhou.t88.gui.widegt.TPanel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
 import org.joml.Quaternionf;
 import org.teacon.signmeup.SignMeUp;
 import org.teacon.signmeup.config.MiniMap;
@@ -17,10 +16,10 @@ import static net.minecraft.util.Mth.PI;
  * @author USS_Shenzhou
  */
 public class MiniMapPanel extends TPanel {
-    private final TImage background = new TImage(ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "textures/gui/minimap_bg.png"));
+    private final TImage background = new TImage(SignMeUp.id("textures/gui/minimap_bg.png"));
     private final InnerMiniMapPanel innerMiniMap = new InnerMiniMapPanel();
     private static final Quaternionf QUATERNION = new Quaternionf();
-    private final TImage me = new TImage(ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "textures/gui/me_minimap.png")) {
+    private final TImage me = new TImage(SignMeUp.id("textures/gui/me_minimap.png")) {
         @Override
         public void render(GuiGraphics guigraphics, int pMouseX, int pMouseY, float pPartialTick) {
             guigraphics.pose().pushPose();

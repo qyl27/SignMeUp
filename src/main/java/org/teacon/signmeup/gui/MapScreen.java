@@ -4,7 +4,6 @@ import cn.ussshenzhou.t88.gui.advanced.THoverSensitiveImageButton;
 import cn.ussshenzhou.t88.gui.screen.TScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.ClientHooks;
 import org.teacon.signmeup.SignMeUp;
 
@@ -19,8 +18,8 @@ public class MapScreen extends TScreen {
             button -> {
                 ClientHooks.pushGuiLayer(Minecraft.getInstance(), new SettingsScreen());
             },
-            ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "textures/gui/setting.png"),
-            ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "textures/gui/setting_hovered.png"));
+            SignMeUp.id("textures/gui/setting.png"),
+            SignMeUp.id("textures/gui/setting_hovered.png"));
     private final CommandsButtonPanel commandsButtonPanel = new CommandsButtonPanel();
     private final WayPointsButtonPanel wayPointsButtonPanel = new WayPointsButtonPanel();
 

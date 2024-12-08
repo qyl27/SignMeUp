@@ -6,7 +6,6 @@ import cn.ussshenzhou.t88.gui.util.LayoutHelper;
 import cn.ussshenzhou.t88.gui.widegt.TImage;
 import cn.ussshenzhou.t88.gui.widegt.TPanel;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
 import org.joml.Vector2i;
 import org.teacon.signmeup.SignMeUp;
 
@@ -14,7 +13,7 @@ import org.teacon.signmeup.SignMeUp;
  * @author USS_Shenzhou
  */
 public abstract class ButtonPanel extends TPanel {
-    private final TImage topDeco = new TImage(ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "textures/gui/button_panel_top.png")) {
+    private final TImage topDeco = new TImage(SignMeUp.id("textures/gui/button_panel_top.png")) {
         @Override
         public void renderTop(GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
             super.renderTop(graphics, pMouseX, pMouseY, pPartialTick);
@@ -25,7 +24,7 @@ public abstract class ButtonPanel extends TPanel {
         public void render(GuiGraphics guigraphics, int pMouseX, int pMouseY, float pPartialTick) {
         }
     };
-    private final TImage bottomDeco = new TImage(ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "textures/gui/button_panel_bottom.png")) {
+    private final TImage bottomDeco = new TImage(SignMeUp.id("textures/gui/button_panel_bottom.png")) {
         @Override
         public void renderTop(GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
             super.renderTop(graphics, pMouseX, pMouseY, pPartialTick);
