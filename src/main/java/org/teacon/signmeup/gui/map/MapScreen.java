@@ -1,4 +1,4 @@
-package org.teacon.signmeup.gui;
+package org.teacon.signmeup.gui.map;
 
 import cn.ussshenzhou.t88.gui.advanced.THoverSensitiveImageButton;
 import cn.ussshenzhou.t88.gui.screen.TScreen;
@@ -6,8 +6,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.client.ClientHooks;
-import org.joml.Vector2i;
 import org.teacon.signmeup.SignMeUp;
+import org.teacon.signmeup.gui.map.bp.CommandsButtonPanel;
+import org.teacon.signmeup.gui.map.bp.WayPointsButtonPanel;
+import org.teacon.signmeup.gui.settings.SettingsScreen;
 
 /**
  * @author USS_Shenzhou

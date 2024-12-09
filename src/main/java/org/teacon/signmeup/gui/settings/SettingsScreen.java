@@ -1,4 +1,4 @@
-package org.teacon.signmeup.gui;
+package org.teacon.signmeup.gui.settings;
 
 import cn.ussshenzhou.t88.config.ConfigHelper;
 import cn.ussshenzhou.t88.gui.HudManager;

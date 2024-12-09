@@ -1,4 +1,4 @@
-package org.teacon.signmeup.gui;
+package org.teacon.signmeup.gui.map.bp;
 
 import cn.ussshenzhou.t88.config.ConfigHelper;
 import cn.ussshenzhou.t88.gui.advanced.THoverSensitiveImageButton;
@@ -8,6 +8,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import org.teacon.signmeup.SignMeUp;
 import org.teacon.signmeup.config.Waypoints;
+import org.teacon.signmeup.gui.map.ButtonPanelBase;
 import org.teacon.signmeup.network.TeleportToWayPointPacket;
 
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * @author USS_Shenzhou
  */
-public class WayPointsButtonPanel extends ButtonPanel {
+public class WayPointsButtonPanel extends ButtonPanelBase {
 
     public WayPointsButtonPanel() {
         super(true);

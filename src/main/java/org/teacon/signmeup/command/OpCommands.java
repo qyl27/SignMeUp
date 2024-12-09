@@ -52,6 +52,7 @@ public class OpCommands {
         var name = context.getArgument("name", String.class);
         var description = context.getArgument("description", String.class);
         var waypoint = new Waypoints.WayPoint(name, description, pos.getX(), pos.getY(), pos.getZ());
+
         ConfigHelper.getConfigWrite(Waypoints.class, waypoints -> {
             waypoints.waypoints.stream().filter(w -> w.name.equals(waypoint.name)).findFirst().ifPresentOrElse(
                     point -> context.getSource().sendSuccess(() -> Component.literal("[" + point + "] already exists. Remove it first if you want to replace it."), true),
@@ -62,6 +63,7 @@ public class OpCommands {
                     }
             );
         });
+
         return Command.SINGLE_SUCCESS;
     }
 

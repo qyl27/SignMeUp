@@ -1,4 +1,4 @@
-package org.teacon.signmeup.gui;
+package org.teacon.signmeup.gui.map;
 
 import cn.ussshenzhou.t88.config.ConfigHelper;
 import cn.ussshenzhou.t88.gui.util.HorizontalAlignment;
@@ -8,6 +8,7 @@ import cn.ussshenzhou.t88.gui.widegt.TLabel;
 import cn.ussshenzhou.t88.gui.widegt.TPanel;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Vector2i;
@@ -58,7 +59,11 @@ public class WayPointsPanel extends TPanel {
     protected void update() {
         if (logicWaypoints.isEmpty()) {
             ConfigHelper.getConfigRead(Waypoints.class).waypoints.forEach(
-                    wayPoint -> logicWaypoints.put(wayPoint, new WayPointDot(SignMeUp.id("textures/gui/waypoint.png")))
+                    wayPoint -> {
+                        WayPointDot dot = new WayPointDot(SignMeUp.id("textures/gui/waypoint.png"));
+                        dot.setTooltip(Tooltip.create(Component.literal(wayPoint.name)));
+                        logicWaypoints.put(wayPoint, dot);
+                    }
             );
         }
         logicWaypoints.forEach((wayPoint, wayPointDot) -> {
@@ -137,6 +142,8 @@ public class WayPointsPanel extends TPanel {
             var pos = WayPointsPanel.this.getParentInstanceOf(MapPanel.class).map.worldToGui(x, z);
             this.setAbsBounds(pos.x - DOT_SIZE / 2, pos.y - DOT_SIZE / 2, DOT_SIZE, DOT_SIZE);
             number.setText(Component.literal(String.valueOf(wayPoints.size())));
+
+            setTooltip(Tooltip.create(Component.literal(wayPoints.stream().map(p -> p.name).collect(Collectors.joining("\n")))));
         }
     }
 }

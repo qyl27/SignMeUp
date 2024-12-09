@@ -1,4 +1,4 @@
-package org.teacon.signmeup.gui;
+package org.teacon.signmeup.gui.map.bp;
 
 import cn.ussshenzhou.t88.config.ConfigHelper;
 import cn.ussshenzhou.t88.gui.advanced.THoverSensitiveImageButton;
@@ -7,12 +7,13 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import org.teacon.signmeup.SignMeUp;
 import org.teacon.signmeup.config.PlayerCommands;
+import org.teacon.signmeup.gui.map.ButtonPanelBase;
 import org.teacon.signmeup.network.PerformCommandPacket;
 
 /**
  * @author USS_Shenzhou
  */
-public class CommandsButtonPanel extends ButtonPanel {
+public class CommandsButtonPanel extends ButtonPanelBase {
 
     public CommandsButtonPanel() {
         super(false);

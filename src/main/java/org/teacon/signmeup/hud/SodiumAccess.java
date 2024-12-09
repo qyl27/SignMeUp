@@ -5,6 +5,7 @@ import net.caffeinemc.mods.sodium.client.render.chunk.ChunkRenderer;
 import net.caffeinemc.mods.sodium.client.render.chunk.RenderSectionManager;
 import net.caffeinemc.mods.sodium.client.render.chunk.ShaderChunkRenderer;
 import net.caffeinemc.mods.sodium.client.render.chunk.vertex.format.ChunkVertexType;
+import org.teacon.signmeup.SignMeUp;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -16,6 +17,10 @@ public class SodiumAccess {
     private static final MethodHandle RENDER_SECTION_MANAGER;
 
     static {
+        if (!SignMeUp.IS_SODIUM_INSTALLED) {
+            throw new AssertionError("Sodium is not installed.");
+        }
+
         try {
             MethodHandles.Lookup myself = MethodHandles.lookup();
 

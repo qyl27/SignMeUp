@@ -123,7 +123,6 @@ public class InnerMiniMapPanel extends TPanel {
                 CapturedRenderingState.INSTANCE.setGbufferModelView(MODEL_VIEW_MATRIX);
                 camera.setPosition(posSodium);
                 RenderDevice.enterManagedCode();
-                var renderer = new DefaultChunkRenderer(RenderDevice.INSTANCE, vertexType);
                 var name = Iris.getIrisConfig().getShaderPackName();
                 Iris.getIrisConfig().setShaderPackName(null);
                 rendering = true;

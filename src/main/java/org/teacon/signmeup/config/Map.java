@@ -11,7 +11,6 @@ public class Map implements TConfig {
         return "SignMeUp";
     }
 
-    public String title = "TeaCon";
     public int worldSize = 512;
     public int centerWorldX = 0, centerWorldZ = 0;
 }

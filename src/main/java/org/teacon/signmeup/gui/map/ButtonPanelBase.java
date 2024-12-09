@@ -1,4 +1,4 @@
-package org.teacon.signmeup.gui;
+package org.teacon.signmeup.gui.map;
 
 import cn.ussshenzhou.t88.gui.advanced.THoverSensitiveImageButton;
 import cn.ussshenzhou.t88.gui.container.TVerticalScrollContainer;
@@ -18,7 +18,7 @@ import org.teacon.signmeup.SignMeUp;
 /**
  * @author USS_Shenzhou
  */
-public abstract class ButtonPanel extends TPanel {
+public abstract class ButtonPanelBase extends TPanel {
     private final TImage topDeco = new TImage(SignMeUp.id("textures/gui/button_panel_top.png")) {
         @Override
         public void renderTop(GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
@@ -86,7 +86,7 @@ public abstract class ButtonPanel extends TPanel {
 
     private final THoverSensitiveImageButtonImpl collapse;
 
-    public ButtonPanel(boolean left) {
+    public ButtonPanelBase(boolean left) {
         super();
         this.left = left;
         this.setBackground(0xaa564149);

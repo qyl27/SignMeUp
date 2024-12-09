@@ -10,7 +10,7 @@ import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.client.settings.KeyModifier;
 import org.lwjgl.glfw.GLFW;
-import org.teacon.signmeup.gui.MapScreen;
+import org.teacon.signmeup.gui.map.MapScreen;
 
 /**
  * @author USS_Shenzhou
@@ -21,8 +21,8 @@ public class ModKeyInput {
             "key.sign_up.open_map", KeyConflictContext.IN_GAME, KeyModifier.NONE,
             InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_M, "key.categories.sign_up"
     );    public static final KeyMapping OPEN_NEW_MAP = new KeyMapping(
-            "key.sign_up.open_new_map", KeyConflictContext.IN_GAME, KeyModifier.ALT,
-            InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_M, "key.categories.sign_up"
+            "key.sign_up.open_new_map", KeyConflictContext.IN_GAME, KeyModifier.NONE,
+            InputConstants.Type.KEYSYM, -1, "key.categories.sign_up"
     );
 
 

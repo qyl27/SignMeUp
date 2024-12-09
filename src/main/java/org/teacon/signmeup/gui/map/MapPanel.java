@@ -1,4 +1,4 @@
-package org.teacon.signmeup.gui;
+package org.teacon.signmeup.gui.map;
 
 import cn.ussshenzhou.t88.config.ConfigHelper;
 import cn.ussshenzhou.t88.gui.container.TVerticalAndHorizontalScrollContainer;
@@ -27,9 +27,10 @@ import static net.minecraft.util.Mth.PI;
 public class MapPanel extends TVerticalAndHorizontalScrollContainer {
     private static final ResourceLocation SCROLLER_VERTICAL = SignMeUp.id("scrollbar_vert");
     private static final ResourceLocation SCROLLER_HORIZONTAL = SignMeUp.id("scrollbar_hori");
-
-    protected final InnerMapPanel map = new InnerMapPanel();
     private static final Quaternionf QUATERNION = new Quaternionf();
+
+    final InnerMapPanel map = new InnerMapPanel();
+
     private final TImage me = new TImage(SignMeUp.id("textures/gui/me_map.png")) {
         @Override
         public void render(GuiGraphics guigraphics, int pMouseX, int pMouseY, float pPartialTick) {
