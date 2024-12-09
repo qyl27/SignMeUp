@@ -144,10 +144,23 @@ dependencies {
     // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
     // The group id is ignored when searching -- in this case, it is "blank"
     // implementation "blank:coolmod-${mc_version}:${coolmod_version}"
+//    if (System.getProperty("idea.active")) {
+//        implementation("cn.ussshenzhou:t88:0.+") {
+//            exclude group: "curse.maven", module: "irisshaders-455508"
+//        }
+//        annotationProcessor("cn.ussshenzhou:t88:0.+")
+//    } else {
+//        def t88FileId = '5700086'
+//        implementation('curse.maven:t88-663112:' + t88FileId) {
+//            exclude group: "curse.maven", module: "irisshaders-455508"
+//        }
+//        annotationProcessor 'curse.maven:t88-663112:' + t88FileId
+//    }
 
     //implementation "curse.maven:irisshaders-455508:5663587"
     // Example mod dependency using a file as dependency
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "blank:sodium-neoforge:0.6.0-beta.2+mc1.21.1"
+    implementation(annotationProcessor "blank:t88:0.12.13-all")
     implementation "curse.maven:irisshaders-455508:5765375"
     // Example project dependency using a sister or child project:
     // implementation project(":myproject")
@@ -156,8 +169,6 @@ dependencies {
     compileOnly(annotationProcessor("com.bawnorton.mixinsquared:mixinsquared-common:0.2.0-beta.6"))
     implementation(jarJar("com.bawnorton.mixinsquared:mixinsquared-common:0.2.0-beta.6"))
 
-    implementation "blank:sodium-neoforge:0.6.0-beta.2+mc1.21.1"
-    implementation(annotationProcessor "blank:t88:0.12.13-all")
     annotationProcessor 'org.spongepowered:mixin:0.8.7:processor'
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html

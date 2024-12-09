@@ -1,13 +1,14 @@
 package org.teacon.signmeup;
 
 import cn.ussshenzhou.t88.config.ConfigHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
+import org.teacon.signmeup.config.Map;
 import org.teacon.signmeup.config.MiniMap;
 import org.teacon.signmeup.config.PlayerCommands;
-import org.teacon.signmeup.config.Map;
 import org.teacon.signmeup.config.Waypoints;
 
 /**
@@ -24,5 +25,9 @@ public class SignMeUp {
         ConfigHelper.loadConfig(new Map());
         ConfigHelper.loadConfig(new Waypoints());
         ConfigHelper.loadConfig(new MiniMap());
+    }
+
+    public static ResourceLocation id(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MODID, path);
     }
 }

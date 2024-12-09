@@ -19,7 +19,7 @@ import org.teacon.signmeup.SignMeUp;
  * @author USS_Shenzhou
  */
 public abstract class ButtonPanel extends TPanel {
-    private final TImage topDeco = new TImage(ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "textures/gui/button_panel_top.png")) {
+    private final TImage topDeco = new TImage(SignMeUp.id("textures/gui/button_panel_top.png")) {
         @Override
         public void renderTop(GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
             super.renderTop(graphics, pMouseX, pMouseY, pPartialTick);
@@ -30,7 +30,7 @@ public abstract class ButtonPanel extends TPanel {
         public void render(GuiGraphics guigraphics, int pMouseX, int pMouseY, float pPartialTick) {
         }
     };
-    private final TImage bottomDeco = new TImage(ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "textures/gui/button_panel_bottom.png")) {
+    private final TImage bottomDeco = new TImage(SignMeUp.id("textures/gui/button_panel_bottom.png")) {
         @Override
         public void renderTop(GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
             super.renderTop(graphics, pMouseX, pMouseY, pPartialTick);
@@ -42,10 +42,10 @@ public abstract class ButtonPanel extends TPanel {
         }
     };
 
-    private static final ResourceLocation ARROW_LEFT = ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "textures/gui/button_panel_arrow_left.png");
-    private final static ResourceLocation ARROW_RIGHT = ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "textures/gui/button_panel_arrow_right.png");
-    private final static ResourceLocation ARROW_LEFT_HD = ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "textures/gui/button_panel_arrow_left_hovered.png");
-    private final static ResourceLocation ARROW_RIGHT_HD = ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "textures/gui/button_panel_arrow_right_hovered.png");
+    private static final ResourceLocation ARROW_LEFT = SignMeUp.id("textures/gui/button_panel_arrow_left.png");
+    private final static ResourceLocation ARROW_RIGHT = SignMeUp.id("textures/gui/button_panel_arrow_right.png");
+    private final static ResourceLocation ARROW_LEFT_HD = SignMeUp.id("textures/gui/button_panel_arrow_left_hovered.png");
+    private final static ResourceLocation ARROW_RIGHT_HD = SignMeUp.id("textures/gui/button_panel_arrow_right_hovered.png");
 
     private static final class THoverSensitiveImageButtonImpl extends THoverSensitiveImageButton {
         private TImage image, hovered;
@@ -171,7 +171,7 @@ public abstract class ButtonPanel extends TPanel {
             super.render(guigraphics, pMouseX, pMouseY, pPartialTick);
         }
 
-        private static final ResourceLocation SCROLLER_VERTICAL = ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "scrollbar_vert");
+        private static final ResourceLocation SCROLLER_VERTICAL = SignMeUp.id("scrollbar_vert");
 
         @Override
         protected void renderScrollBar(GuiGraphics guiGraphics) {

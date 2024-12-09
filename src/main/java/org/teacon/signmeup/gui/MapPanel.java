@@ -25,12 +25,12 @@ import static net.minecraft.util.Mth.PI;
  * @author USS_Shenzhou
  */
 public class MapPanel extends TVerticalAndHorizontalScrollContainer {
-    private static final ResourceLocation SCROLLER_VERTICAL = ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "scrollbar_vert");
-    private static final ResourceLocation SCROLLER_HORIZONTAL = ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "scrollbar_hori");
+    private static final ResourceLocation SCROLLER_VERTICAL = SignMeUp.id("scrollbar_vert");
+    private static final ResourceLocation SCROLLER_HORIZONTAL = SignMeUp.id("scrollbar_hori");
 
     protected final InnerMapPanel map = new InnerMapPanel();
     private static final Quaternionf QUATERNION = new Quaternionf();
-    private final TImage me = new TImage(ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "textures/gui/me_map.png")) {
+    private final TImage me = new TImage(SignMeUp.id("textures/gui/me_map.png")) {
         @Override
         public void render(GuiGraphics guigraphics, int pMouseX, int pMouseY, float pPartialTick) {
             guigraphics.pose().pushPose();
@@ -65,7 +65,7 @@ public class MapPanel extends TVerticalAndHorizontalScrollContainer {
         me.setBounds(mePos.x - 16, mePos.y - 16, 32, 32);
     }
 
-    private static final ResourceLocation ARROW_OUTER = ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "textures/gui/arrow_outer.png");
+    private static final ResourceLocation ARROW_OUTER = SignMeUp.id("textures/gui/arrow_outer.png");
 
     @Override
     public void render(GuiGraphics guigraphics, int pMouseX, int pMouseY, float pPartialTick) {
@@ -99,13 +99,13 @@ public class MapPanel extends TVerticalAndHorizontalScrollContainer {
                 ay = dy > 0 ? gh - by : by;
             }
             QUATERNION.identity().rotateZ((float) (-Math.atan(tan) + (dy > 0 ? Math.PI : 0D)));
-            guigraphics.pose().last().pose().rotateAround(QUATERNION, (float)(ax + 16), (float) (ay + 6), 0);
+            guigraphics.pose().last().pose().rotateAround(QUATERNION, (float) (ax + 16), (float) (ay + 6), 0);
 
             RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
             RenderSystem.enableDepthTest();
-            guigraphics.blit(ARROW_OUTER, (int) ax, (int) ay, 32, 32, 0F, 0F, 32, 32, 32, 32);
+            guigraphics.blit(ARROW_OUTER, (int) ax - 16, (int) ay - 6, 32, 32, 0F, 0F, 32, 32, 32, 32);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
             guigraphics.pose().popPose();
@@ -181,7 +181,7 @@ public class MapPanel extends TVerticalAndHorizontalScrollContainer {
 
     public static class InnerMapPanel extends TImage {
         public InnerMapPanel() {
-            super(ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "textures/gui/map.png"));
+            super(SignMeUp.id("textures/gui/map.png"));
         }
 
         public Vector2i worldToGui(double x, double z) {

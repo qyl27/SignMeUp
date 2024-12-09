@@ -3,10 +3,8 @@
   "minVersion": "0.8",
   "package": "org.teacon.signmeup.mixin",
   "compatibilityLevel": "JAVA_8",
-  "refmap": "madparticle.refmap.json",
-  "mixins": [
-
-  ],
+  "refmap": "sign_up.refmap.json",
+  "mixins": [],
   "client": [
     "IrisGlFramebufferMixin",
     "IrisRenderSectionManagerMixin",
@@ -14,5 +12,5 @@
   ],
   "injectors": {
     "defaultRequire": 1
-	}
+  }
 }

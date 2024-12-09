@@ -58,7 +58,7 @@ public class WayPointsPanel extends TPanel {
     protected void update() {
         if (logicWaypoints.isEmpty()) {
             ConfigHelper.getConfigRead(Waypoints.class).waypoints.forEach(
-                    wayPoint -> logicWaypoints.put(wayPoint, new WayPointDot(ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "textures/gui/waypoint.png")))
+                    wayPoint -> logicWaypoints.put(wayPoint, new WayPointDot(SignMeUp.id("textures/gui/waypoint.png")))
             );
         }
         logicWaypoints.forEach((wayPoint, wayPointDot) -> {
@@ -79,7 +79,7 @@ public class WayPointsPanel extends TPanel {
                 visualWayPoints.add(wayPointDot);
             } else {
                 checked.addAll(near);
-                var dot = new WayPointMultiDot(ResourceLocation.fromNamespaceAndPath(SignMeUp.MODID, "textures/gui/waypoints.png"));
+                var dot = new WayPointMultiDot(SignMeUp.id("textures/gui/waypoints.png"));
                 near.add(wayPointDot);
                 dot.joinAll(near.stream().map(d -> logicWaypoints.inverse().get(d)).toList());
                 visualWayPoints.add(dot);
