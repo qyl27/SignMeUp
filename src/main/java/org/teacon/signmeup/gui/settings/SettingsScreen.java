@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Component;
 import org.teacon.signmeup.config.MiniMap;
 import org.teacon.signmeup.hud.InnerMiniMapPanel;
 import org.teacon.signmeup.hud.MiniMapPanel;
+import org.teacon.signmeup.hud.RefreshRate;
 
 import java.util.List;
 
@@ -24,11 +25,17 @@ public class SettingsScreen extends TScreen {
         settingsPanel.addOptionCycleButtonInit(Component.translatable("gui.sign_up.minimap.minimap"), List.of(
                         "gui.sign_up.minimap.minimap.on",
                         "gui.sign_up.minimap.minimap.off"
-                //TODO render-preset-off
+                        //TODO render-preset-off
                 ),
                 List.of(
-                        button -> HudManager.addIfSameClassNotExist(new MiniMapPanel()),
-                        button -> HudManager.removeInstanceOf(MiniMapPanel.class)
+                        button -> {
+                            HudManager.addIfSameClassNotExist(new MiniMapPanel());
+                            ConfigHelper.getConfigWrite(MiniMap.class, miniMap -> miniMap.visible = true);
+                        },
+                        button -> {
+                            HudManager.removeInstanceOf(MiniMapPanel.class);
+                            ConfigHelper.getConfigWrite(MiniMap.class, miniMap -> miniMap.visible = false);
+                        }
                 ),
                 entry -> entry.getContent().equals(
                         HudManager.getChildren().stream().anyMatch(tComponent -> tComponent instanceof MiniMapPanel)
@@ -58,6 +65,9 @@ public class SettingsScreen extends TScreen {
                 ConfigHelper.getConfigRead(MiniMap.class).ssaaRatio,
                 true
         );
+        settingsPanel.addOptionCycleButtonInit(Component.translatable("gui.sign_up.minimap.refresh"), List.of(RefreshRate.values()),
+                refreshRate -> button -> ConfigHelper.getConfigWrite(MiniMap.class, miniMap -> miniMap.refreshRate = refreshRate),
+                entry -> entry.getContent() == ConfigHelper.getConfigRead(MiniMap.class).refreshRate);
     }
 
     @Override

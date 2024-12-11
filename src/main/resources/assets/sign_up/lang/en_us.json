@@ -9,5 +9,10 @@
   "gui.sign_up.minimap.minimap.off": "Off",
   "gui.sign_up.minimap.range": "Minimap Range",
   "gui.sign_up.minimap.rotate": "Follow Player Rotating",
-  "gui.sign_up.minimap.ssaa": "SSAA Ratio"
+  "gui.sign_up.minimap.ssaa": "SSAA Ratio",
+  "gui.sign_up.minimap.refresh": "Minimap Refresh Rate",
+  "gui.sign_up.minimap.refresh.every": "Every Frame",
+  "gui.sign_up.minimap.refresh.another": "Every 2 Frames",
+  "gui.sign_up.minimap.refresh.tick": "Every Tick",
+  "gui.sign_up.minimap.refresh.tick20": "Every 20 Ticks"
 }

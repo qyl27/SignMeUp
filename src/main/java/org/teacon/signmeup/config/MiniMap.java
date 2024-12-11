@@ -2,6 +2,7 @@ package org.teacon.signmeup.config;
 
 import cn.ussshenzhou.t88.config.TConfig;
 import net.minecraft.util.Mth;
+import org.teacon.signmeup.hud.RefreshRate;
 
 /**
  * @author USS_Shenzhou
@@ -16,6 +17,8 @@ public class MiniMap implements TConfig {
     private int coverRange = 96;
     public boolean followPlayerRotation = true;
     public float ssaaRatio = 1.5f;
+    public boolean visible = true;
+    public RefreshRate refreshRate = RefreshRate.ANOTHER_FRAME;
 
     public int getCoverRange() {
         return Mth.clamp(coverRange, 8, 320);
@@ -24,4 +27,5 @@ public class MiniMap implements TConfig {
     public void setCoverRange(int coverRange) {
         this.coverRange = coverRange;
     }
+
 }

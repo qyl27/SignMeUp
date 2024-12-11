@@ -8,14 +8,11 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectListIterator;
-import net.caffeinemc.mods.sodium.client.gl.device.CommandList;
 import net.caffeinemc.mods.sodium.client.gl.device.RenderDevice;
 import net.caffeinemc.mods.sodium.client.render.SodiumWorldRenderer;
 import net.caffeinemc.mods.sodium.client.render.chunk.ChunkRenderMatrices;
-import net.caffeinemc.mods.sodium.client.render.chunk.DefaultChunkRenderer;
 import net.caffeinemc.mods.sodium.client.render.chunk.RenderSectionManager;
 import net.caffeinemc.mods.sodium.client.render.chunk.terrain.DefaultTerrainRenderPasses;
-import net.caffeinemc.mods.sodium.client.render.chunk.vertex.format.ChunkVertexType;
 import net.caffeinemc.mods.sodium.client.render.viewport.Viewport;
 import net.caffeinemc.mods.sodium.client.render.viewport.ViewportProvider;
 import net.caffeinemc.mods.sodium.client.util.FlawlessFrames;
@@ -47,6 +44,7 @@ public class InnerMiniMapPanel extends TPanel {
     private static final Quaternionf QUATERNION = new Quaternionf();
     private static final float PI = (float) Math.PI;
     public static boolean rendering = false;
+    private static boolean shouldDraw = true;
 
     static {
         calculateMinimapSize();
@@ -91,6 +89,22 @@ public class InnerMiniMapPanel extends TPanel {
         super.layout();
     }
 
+    private int life = 0;
+
+    @Override
+    public void tickT() {
+        if (ConfigHelper.getConfigRead(MiniMap.class).refreshRate == RefreshRate.TICK) {
+            shouldDraw = true;
+        } else if (ConfigHelper.getConfigRead(MiniMap.class).refreshRate == RefreshRate.TICK_20) {
+            life++;
+            if (life == 20) {
+                life = 0;
+                shouldDraw = true;
+            }
+        }
+        super.tickT();
+    }
+
     @Override
     public void render(GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
         super.render(graphics, pMouseX, pMouseY, pPartialTick);
@@ -98,6 +112,43 @@ public class InnerMiniMapPanel extends TPanel {
     }
 
     private void renderMap(GuiGraphics graphics) {
+        var minecraft = Minecraft.getInstance();
+        switch (ConfigHelper.getConfigRead(MiniMap.class).refreshRate) {
+            case EVERY_FRAME -> shouldDraw = true;
+            case ANOTHER_FRAME -> shouldDraw = !shouldDraw;
+            default -> {
+            }
+        }
+        if (shouldDraw) {
+            drawFbo();
+        }
+        if (ConfigHelper.getConfigRead(MiniMap.class).refreshRate == RefreshRate.TICK || ConfigHelper.getConfigRead(MiniMap.class).refreshRate == RefreshRate.TICK_20) {
+            shouldDraw = false;
+        }
+
+        blit(graphics, minecraft);
+    }
+
+    private void blit(GuiGraphics graphics, Minecraft minecraft) {
+        graphics.pose().pushPose();
+        glBindFramebuffer(GL_FRAMEBUFFER, Minecraft.getInstance().getMainRenderTarget().frameBufferId);
+        var window = minecraft.getWindow();
+        glViewport(0, 0, window.getWidth(), window.getHeight());
+        RenderSystem.setShaderTexture(0, COLOR);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        BufferBuilder bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        float x1 = screenX1(), x2 = screenX2();
+        float y1 = screenY1(), y2 = screenY2();
+        graphics.pose().scale((float) (1 / window.getGuiScale()), (float) (1 / window.getGuiScale()), 1);
+        bufferbuilder.addVertex(graphics.pose().last().pose(), x1, y1, 0).setUv(0, 1);
+        bufferbuilder.addVertex(graphics.pose().last().pose(), x1, y2, 0).setUv(0, 0);
+        bufferbuilder.addVertex(graphics.pose().last().pose(), x2, y2, 0).setUv(1, 0);
+        bufferbuilder.addVertex(graphics.pose().last().pose(), x2, y1, 0).setUv(1, 1);
+        BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
+        graphics.pose().popPose();
+    }
+
+    private void drawFbo() {
         var minecraft = Minecraft.getInstance();
         prepare(minecraft);
         var camera = minecraft.gameRenderer.getMainCamera();
@@ -110,7 +161,6 @@ public class InnerMiniMapPanel extends TPanel {
             try {
                 SodiumWorldRenderer sodiumWorldRenderer = SodiumAccess.getWorldRenderer();
                 RenderSectionManager renderSectionManager = SodiumAccess.getRenderSectionManager(sodiumWorldRenderer);
-                ChunkVertexType vertexType = SodiumAccess.getChunkVertexType(renderSectionManager);
                 var projectionMatrixTmp = RenderSystem.getProjectionMatrix();
 
                 RenderSystem.setProjectionMatrix(PROJECTION_MATRIX, RenderSystem.getVertexSorting());
@@ -124,16 +174,15 @@ public class InnerMiniMapPanel extends TPanel {
                 camera.setPosition(posSodium);
                 RenderDevice.enterManagedCode();
                 var name = Iris.getIrisConfig().getShaderPackName();
-                Iris.getIrisConfig().setShaderPackName(null);
+
                 rendering = true;
                 sodiumWorldRenderer.setupTerrain(camera, viewport, minecraft.player.isSpectator(), FlawlessFrames.isActive());
-                RenderDevice device = RenderDevice.INSTANCE;
-                CommandList commandList = device.createCommandList();
+                //FIXME 玻璃闪烁和GUI都是这三个调用引起的
                 renderSectionManager.renderLayer(matrices, DefaultTerrainRenderPasses.SOLID, posSodium.x, posSodium.y, posSodium.z);
                 renderSectionManager.renderLayer(matrices, DefaultTerrainRenderPasses.CUTOUT, posSodium.x, posSodium.y, posSodium.z);
                 renderSectionManager.renderLayer(matrices, DefaultTerrainRenderPasses.TRANSLUCENT, posSodium.x, posSodium.y, posSodium.z);
-                commandList.flush();
                 rendering = false;
+
                 name.ifPresent(s -> Iris.getIrisConfig().setShaderPackName(s));
                 RenderDevice.exitManagedCode();
                 CapturedRenderingState.INSTANCE.setGbufferModelView(gbufferModelViewTmp);
@@ -151,22 +200,6 @@ public class InnerMiniMapPanel extends TPanel {
                     .stream().filter(renderType -> renderType != RenderType.tripwire())
                     .forEach(renderType -> renderSectionLayer(renderType, pos.x, pos.y, pos.z));
         }
-        graphics.pose().pushPose();
-        glBindFramebuffer(GL_FRAMEBUFFER, Minecraft.getInstance().getMainRenderTarget().frameBufferId);
-        var window = minecraft.getWindow();
-        glViewport(0, 0, window.getWidth(), window.getHeight());
-        RenderSystem.setShaderTexture(0, COLOR);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        BufferBuilder bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        float x1 = screenX1(), x2 = screenX2();
-        float y1 = screenY1(), y2 = screenY2();
-        graphics.pose().scale((float) (1 / window.getGuiScale()), (float) (1 / window.getGuiScale()), 1);
-        bufferbuilder.addVertex(graphics.pose().last().pose(), x1, y1, 0).setUv(0, 1);
-        bufferbuilder.addVertex(graphics.pose().last().pose(), x1, y2, 0).setUv(0, 0);
-        bufferbuilder.addVertex(graphics.pose().last().pose(), x2, y2, 0).setUv(1, 0);
-        bufferbuilder.addVertex(graphics.pose().last().pose(), x2, y1, 0).setUv(1, 1);
-        BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
-        graphics.pose().popPose();
     }
 
     private static float guiScale() {

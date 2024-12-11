@@ -1,3 +1,18 @@
 {
+  "key.categories.sign_up": "Sign Me Up",
+  "key.sign_up.open_map": "打开大地图",
+  "key.sign_up.open_new_map": "重置大地图",
 
+  "gui.sign_up.minimap": "  小地图",
+  "gui.sign_up.minimap.minimap": "小地图显示",
+  "gui.sign_up.minimap.minimap.on": "开",
+  "gui.sign_up.minimap.minimap.off": "关",
+  "gui.sign_up.minimap.range": "小地图范围",
+  "gui.sign_up.minimap.rotate": "跟随视角旋转",
+  "gui.sign_up.minimap.ssaa": "SSAA 抗锯齿比例",
+  "gui.sign_up.minimap.refresh": "小地图刷新率",
+  "gui.sign_up.minimap.refresh.every": "每帧",
+  "gui.sign_up.minimap.refresh.another": "每2帧",
+  "gui.sign_up.minimap.refresh.tick": "每刻",
+  "gui.sign_up.minimap.refresh.tick20": "每20刻"
 }
