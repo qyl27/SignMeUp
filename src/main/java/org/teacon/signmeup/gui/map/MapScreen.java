@@ -3,6 +3,7 @@ package org.teacon.signmeup.gui.map;
 import cn.ussshenzhou.t88.gui.advanced.THoverSensitiveImageButton;
 import cn.ussshenzhou.t88.gui.screen.TScreen;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.client.ClientHooks;
@@ -10,6 +11,9 @@ import org.teacon.signmeup.SignMeUp;
 import org.teacon.signmeup.gui.map.bp.CommandsButtonPanel;
 import org.teacon.signmeup.gui.map.bp.WayPointsButtonPanel;
 import org.teacon.signmeup.gui.settings.SettingsScreen;
+import org.teacon.signmeup.hud.MiniMapAPI;
+
+import java.util.Set;
 
 /**
  * @author USS_Shenzhou
@@ -48,6 +52,15 @@ public class MapScreen extends TScreen {
         super.render(graphics, pMouseX, pMouseY, pPartialTick);
 
         wayPointsButtonPanel.highlight(mapPanel.getHighlightWaypoints(pMouseX, pMouseY));
+
+        String hider = MiniMapAPI.INSTANCE.getHiderString();
+        if (hider != null) {
+            Font font = Minecraft.getInstance().font;
+            graphics.drawCenteredString(
+                    font, Component.translatable("hud.sign_up.minimap.hide", hider),
+                    graphics.guiWidth() / 2, graphics.guiHeight() - font.lineHeight * 2, 0xFFE8DDCD
+            );
+        }
     }
 
     public String getHighlightWaypoints() {

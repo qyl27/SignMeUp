@@ -5,13 +5,16 @@ import cn.ussshenzhou.t88.network.annotation.Codec;
 import cn.ussshenzhou.t88.network.annotation.NetPacket;
 import cn.ussshenzhou.t88.network.annotation.ServerHandler;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.teacon.signmeup.SignMeUp;
 import org.teacon.signmeup.config.Waypoints;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -32,9 +35,19 @@ public record TeleportToWayPointPacket(String name) {
     @ServerHandler
     public void serverHandler(IPayloadContext context) {
         context.enqueueWork(() -> {
-            var waypoints = WAYPOINTS.get(name);
             var player = context.player();
-            player.teleportTo(waypoints.x, waypoints.y, waypoints.z);
+            if (!(player.level() instanceof ServerLevel level)) {
+                return;
+            }
+
+            for (Waypoints.WayPoint waypoint : ConfigHelper.getConfigRead(Waypoints.class).waypoints) {
+                if (waypoint.name.equals(name)) {
+                    player.teleportTo(level, waypoint.x, waypoint.y, waypoint.z, Set.of(), waypoint.rx, waypoint.ry);
+                    return;
+                }
+            }
+
+            player.sendSystemMessage(Component.literal("Open a new SMU map! The waypoint data is out of date."));
         });
     }
 }

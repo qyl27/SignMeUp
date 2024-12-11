@@ -10,6 +10,8 @@ import org.joml.Quaternionf;
 import org.teacon.signmeup.SignMeUp;
 import org.teacon.signmeup.config.MiniMap;
 
+import java.util.Set;
+
 import static net.minecraft.util.Mth.PI;
 
 /**
@@ -45,8 +47,8 @@ public class MiniMapPanel extends TPanel {
     @Override
     public void tickT() {
         super.tickT();
-        var debugOn = Minecraft.getInstance().getDebugOverlay().showDebugScreen();
-        children.forEach(childTComponent -> childTComponent.setVisibleT(!debugOn));
+        var visible = !Minecraft.getInstance().getDebugOverlay().showDebugScreen() && MiniMapAPI.INSTANCE.visible();
+        children.forEach(childTComponent -> childTComponent.setVisibleT(visible));
     }
 
     @Override
