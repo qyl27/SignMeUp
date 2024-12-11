@@ -9,8 +9,10 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.coordinates.RotationArgument;
 import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.commands.arguments.coordinates.WorldCoordinates;
+import net.minecraft.core.Rotations;
 import net.minecraft.network.chat.Component;
 import org.teacon.signmeup.config.Waypoints;
 import org.teacon.signmeup.network.RemoveWaypointPacket;
@@ -29,10 +31,12 @@ public class OpCommands {
                         .requires(commandSourceStack -> commandSourceStack.hasPermission(2))
                         .then(Commands.literal("set")
                                 .then(Commands.argument("pos", Vec3Argument.vec3(false))
-                                        .then(Commands.argument("name", StringArgumentType.string())
-                                                .executes(OpCommands::setWaypoint)
-                                                .then(Commands.argument("description", StringArgumentType.string())
+                                        .then(Commands.argument("rotation", RotationArgument.rotation())
+                                                .then(Commands.argument("name", StringArgumentType.string())
                                                         .executes(OpCommands::setWaypoint)
+                                                        .then(Commands.argument("description", StringArgumentType.string())
+                                                                .executes(OpCommands::setWaypoint)
+                                                        )
                                                 )
                                         )
                                 )
@@ -51,7 +55,8 @@ public class OpCommands {
         var pos = context.getArgument("pos", WorldCoordinates.class).getBlockPos(context.getSource());
         var name = context.getArgument("name", String.class);
         var description = context.getArgument("description", String.class);
-        var waypoint = new Waypoints.WayPoint(name, description, pos.getX(), pos.getY(), pos.getZ());
+        var rotation = context.getArgument("rotation", WorldCoordinates.class).getRotation(context.getSource());
+        var waypoint = new Waypoints.WayPoint(name, description, pos.getX(), pos.getY(), pos.getZ(), rotation.x, rotation.y);
 
         ConfigHelper.getConfigWrite(Waypoints.class, waypoints -> {
             waypoints.waypoints.stream().filter(w -> w.name.equals(waypoint.name)).findFirst().ifPresentOrElse(
@@ -59,7 +64,7 @@ public class OpCommands {
                     () -> {
                         context.getSource().sendSuccess(() -> Component.literal("Added " + waypoint), true);
                         waypoints.waypoints.add(waypoint);
-                        NetworkHelper.sendToAllPlayers(new SetWaypointPacket(name, description, pos));
+                        NetworkHelper.sendToAllPlayers(new SetWaypointPacket(name, description, pos, new Rotations(rotation.x, 0, rotation.y)));
                     }
             );
         });

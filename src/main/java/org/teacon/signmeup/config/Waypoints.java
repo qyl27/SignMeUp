@@ -19,29 +19,24 @@ public class Waypoints implements TConfig {
     public static class WayPoint {
         public String name, description;
         public int x, y, z;
+        public float rx, ry;
 
-        public WayPoint(String name, String description, int x, int y, int z) {
+        public WayPoint(String name, String description, int x, int y, int z, float rx, float ry) {
             this.name = name;
             this.description = description;
             this.x = x;
             this.y = y;
             this.z = z;
-        }
-
-        public WayPoint(String name, String description, BlockPos pos) {
-            this.name = name;
-            this.description = description;
-            this.x = pos.getX();
-            this.y = pos.getY();
-            this.z = pos.getZ();
+            this.rx = rx;
+            this.ry = ry;
         }
 
         public WayPoint() {
-            this("", "", 0, 0, 0);
+            this("", "", 0, 0, 0, 0, 0);
         }
 
         public static WayPoint dumbWayPoint(String name) {
-            return new WayPoint(name, "", 0, 0, 0);
+            return new WayPoint(name, "", 0, 0, 0, 0, 0);
         }
 
         @Override
@@ -59,7 +54,7 @@ public class Waypoints implements TConfig {
 
         @Override
         public String toString() {
-            return "[WayPoint name=" + name + ", description=" + description + ", <" + x + ", " + y + ", " + z + ">]";
+            return "[WayPoint name=" + name + ", description=" + description + ", <" + x + ", " + y + ", " + z + ">, rotation=<" + rx + ", " + ry + ">]";
         }
     }
 }

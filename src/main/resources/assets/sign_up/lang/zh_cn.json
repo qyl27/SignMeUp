@@ -1,3 +1,15 @@
 {
+  "key.categories.sign_up": "Sign Me Up",
+  "key.sign_up.open_map": "打开地图",
+  "key.sign_up.open_new_map": "打开新地图",
 
+  "gui.sign_up.minimap": "小地图",
+  "gui.sign_up.minimap.minimap": "小地图",
+  "gui.sign_up.minimap.minimap.on": "开启",
+  "gui.sign_up.minimap.minimap.off": "关闭",
+  "gui.sign_up.minimap.range": "小地图渲染范围",
+  "gui.sign_up.minimap.rotate": "跟随玩家旋转",
+  "gui.sign_up.minimap.ssaa": "SSAA 角度",
+
+  "hud.sign_up.minimap.hide": "小地图被以下模组隐藏：%s"
 }
