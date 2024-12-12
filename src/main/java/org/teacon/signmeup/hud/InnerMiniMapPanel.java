@@ -177,7 +177,6 @@ public class InnerMiniMapPanel extends TPanel {
 
                 rendering = true;
                 sodiumWorldRenderer.setupTerrain(camera, viewport, minecraft.player.isSpectator(), FlawlessFrames.isActive());
-                //FIXME 玻璃闪烁和GUI都是这三个调用引起的
                 renderSectionManager.renderLayer(matrices, DefaultTerrainRenderPasses.SOLID, posSodium.x, posSodium.y, posSodium.z);
                 renderSectionManager.renderLayer(matrices, DefaultTerrainRenderPasses.CUTOUT, posSodium.x, posSodium.y, posSodium.z);
                 renderSectionManager.renderLayer(matrices, DefaultTerrainRenderPasses.TRANSLUCENT, posSodium.x, posSodium.y, posSodium.z);

@@ -4,10 +4,11 @@
   "package": "org.teacon.signmeup.mixin",
   "compatibilityLevel": "JAVA_8",
   "refmap": "sign_up.refmap.json",
-  "mixins": [],
+  "mixins": [
+  ],
   "client": [
     "IrisGlFramebufferMixin",
-    "IrisRenderSectionManagerMixin",
+    "SodiumRenderSectionManagerMixin",
     "IrisSodiumShaderMixin"
   ],
   "injectors": {

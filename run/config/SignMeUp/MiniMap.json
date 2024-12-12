@@ -3,5 +3,5 @@
   "followPlayerRotation": false,
   "ssaaRatio": 1.5,
   "visible": true,
-  "refreshRate": "EVERY_FRAME"
+  "refreshRate": "TICK"
 }
