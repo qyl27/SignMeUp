@@ -28,11 +28,15 @@ public class ModKeyInput {
 
     @SubscribeEvent
     public static void onKeyInput(InputEvent.Key event) {
+        MapScreen screen;
         if (OPEN_NEW_MAP.consumeClick()) {
-            Minecraft.getInstance().setScreen(MapScreen.getNewInstance());
+            screen = MapScreen.getNewInstance();
+        } else if (OPEN_MAP.consumeClick()) {
+            screen = MapScreen.getInstance();
+        } else {
+            return;
         }
-        if (OPEN_MAP.consumeClick()) {
-            Minecraft.getInstance().setScreen(MapScreen.getInstance());
-        }
+        screen.layout();
+        Minecraft.getInstance().setScreen(screen);
     }
 }

@@ -15,7 +15,7 @@ public class PlayerCommands implements TConfig {
 
     public ArrayList<Command> playerCommands = new ArrayList<>();
 
-    public static class Command{
+    public static class Command {
         public String title = "";
         public String tooltip = "";
         public ArrayList<String> commands = new ArrayList<>();

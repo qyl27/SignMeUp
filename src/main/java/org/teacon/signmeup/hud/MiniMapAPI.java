@@ -57,7 +57,7 @@ public final class MiniMapAPI implements MiniMap {
             return m1 + ", " + m2 + ", ... (" + size + " more mods)";
         } else if (size == 1) {
             return m1 + ", " + m2 + ", ... (1 more mod)";
-        }else {
+        } else {
             return m1 + ", " + m2;
         }
     }
