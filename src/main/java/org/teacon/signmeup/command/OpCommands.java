@@ -34,9 +34,6 @@ public class OpCommands {
                                         .then(Commands.argument("rotation", RotationArgument.rotation())
                                                 .then(Commands.argument("name", StringArgumentType.string())
                                                         .executes(OpCommands::setWaypoint)
-                                                        .then(Commands.argument("description", StringArgumentType.string())
-                                                                .executes(OpCommands::setWaypoint)
-                                                        )
                                                 )
                                         )
                                 )
@@ -56,7 +53,7 @@ public class OpCommands {
         var name = context.getArgument("name", String.class);
         var description = context.getArgument("description", String.class);
         var rotation = context.getArgument("rotation", WorldCoordinates.class).getRotation(context.getSource());
-        var waypoint = new Waypoints.WayPoint(name, description, pos.getX(), pos.getY(), pos.getZ(), rotation.x, rotation.y);
+        var waypoint = new Waypoints.WayPoint(name, description, pos.getX(), pos.getY(), pos.getZ(), rotation.y, rotation.x);
 
         ConfigHelper.getConfigWrite(Waypoints.class, waypoints -> {
             waypoints.waypoints.stream().filter(w -> w.name.equals(waypoint.name)).findFirst().ifPresentOrElse(
@@ -64,7 +61,7 @@ public class OpCommands {
                     () -> {
                         context.getSource().sendSuccess(() -> Component.literal("Added " + waypoint), true);
                         waypoints.waypoints.add(waypoint);
-                        NetworkHelper.sendToAllPlayers(new SetWaypointPacket(name, description, pos, new Rotations(rotation.x, 0, rotation.y)));
+                        NetworkHelper.sendToAllPlayers(new SetWaypointPacket(name, description, pos, new Rotations(rotation.y, 0, rotation.x)));
                     }
             );
         });
