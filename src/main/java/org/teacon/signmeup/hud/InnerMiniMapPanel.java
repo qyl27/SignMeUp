@@ -1,6 +1,5 @@
 package org.teacon.signmeup.hud;
 
-import cn.ussshenzhou.t88.T88;
 import cn.ussshenzhou.t88.config.ConfigHelper;
 import cn.ussshenzhou.t88.gui.widegt.TPanel;
 import com.mojang.blaze3d.shaders.Uniform;
@@ -16,8 +15,7 @@ import net.caffeinemc.mods.sodium.client.render.chunk.terrain.DefaultTerrainRend
 import net.caffeinemc.mods.sodium.client.render.viewport.Viewport;
 import net.caffeinemc.mods.sodium.client.render.viewport.ViewportProvider;
 import net.caffeinemc.mods.sodium.client.util.FlawlessFrames;
-import net.irisshaders.iris.Iris;
-import net.irisshaders.iris.uniforms.CapturedRenderingState;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
@@ -26,10 +24,16 @@ import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.chunk.SectionRenderDispatcher;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.fml.loading.FMLLoader;
 import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
 import org.joml.Quaternionf;
 import org.teacon.signmeup.SignMeUp;
 import org.teacon.signmeup.config.MiniMap;
+import org.teacon.signmeup.config.RefreshRate;
+import org.teacon.signmeup.hud.compat.IrisAccess;
+import org.teacon.signmeup.hud.compat.SodiumAccess;
 
 import static org.lwjgl.opengl.GL40C.*;
 
@@ -157,47 +161,74 @@ public class InnerMiniMapPanel extends TPanel {
         glViewport(0, 0, minimapFrameSize, minimapFrameSize);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         Frustum frustum = new Frustum(MODEL_VIEW_MATRIX, PROJECTION_MATRIX);
-        if (SignMeUp.IS_SODIUM_INSTALLED) {
+        if (SignMeUp.SODIUM_INSTALLED) {
             try {
-                SodiumWorldRenderer sodiumWorldRenderer = SodiumAccess.getWorldRenderer();
-                RenderSectionManager renderSectionManager = SodiumAccess.getRenderSectionManager(sodiumWorldRenderer);
-                var projectionMatrixTmp = RenderSystem.getProjectionMatrix();
+                SodiumWorldRenderer renderer = SodiumAccess.getWorldRenderer();
+                RenderSectionManager renderSectionManager = SodiumAccess.getRenderSectionManager(renderer);
 
+                Matrix4f projectionMatrix = RenderSystem.getProjectionMatrix();
                 RenderSystem.setProjectionMatrix(PROJECTION_MATRIX, RenderSystem.getVertexSorting());
-                var posSodium = pos.add(0, 320, 0);
-                frustum.prepare(posSodium.x, posSodium.y, posSodium.z);
-                @SuppressWarnings("DataFlowIssue")
-                Viewport viewport = ((ViewportProvider) frustum).sodium$createViewport();
-                var matrices = new ChunkRenderMatrices(PROJECTION_MATRIX, MODEL_VIEW_MATRIX);
-                var gbufferModelViewTmp = CapturedRenderingState.INSTANCE.getGbufferModelView();
-                CapturedRenderingState.INSTANCE.setGbufferModelView(MODEL_VIEW_MATRIX);
-                camera.setPosition(posSodium);
-                RenderDevice.enterManagedCode();
-                var name = Iris.getIrisConfig().getShaderPackName();
+                try {
+                    Vec3 pos2 = pos.add(0, 320, 0);
+                    frustum.prepare(pos2.x, pos2.y, pos2.z);
 
-                rendering = true;
-                sodiumWorldRenderer.setupTerrain(camera, viewport, minecraft.player.isSpectator(), FlawlessFrames.isActive());
-                renderSectionManager.renderLayer(matrices, DefaultTerrainRenderPasses.SOLID, posSodium.x, posSodium.y, posSodium.z);
-                renderSectionManager.renderLayer(matrices, DefaultTerrainRenderPasses.CUTOUT, posSodium.x, posSodium.y, posSodium.z);
-                renderSectionManager.renderLayer(matrices, DefaultTerrainRenderPasses.TRANSLUCENT, posSodium.x, posSodium.y, posSodium.z);
-                rendering = false;
+                    Viewport viewport = ((ViewportProvider) frustum).sodium$createViewport();
+                    ChunkRenderMatrices matrices = new ChunkRenderMatrices(PROJECTION_MATRIX, MODEL_VIEW_MATRIX);
 
-                name.ifPresent(s -> Iris.getIrisConfig().setShaderPackName(s));
-                RenderDevice.exitManagedCode();
-                CapturedRenderingState.INSTANCE.setGbufferModelView(gbufferModelViewTmp);
-                camera.setPosition(pos);
-                RenderSystem.setProjectionMatrix(projectionMatrixTmp, RenderSystem.getVertexSorting());
+                    if (SignMeUp.IRIS_INSTALLED) {
+                        Matrix4fc gbufferModelView = IrisAccess.getGBufferModelView();
+                        IrisAccess.setGBufferModelView(MODEL_VIEW_MATRIX);
+                        try {
+                            render0(camera, pos2, renderer, viewport, minecraft, renderSectionManager, matrices, pos);
+                        } finally {
+                            IrisAccess.setGBufferModelView(gbufferModelView);
+                        }
+                    } else {
+                        render0(camera, pos2, renderer, viewport, minecraft, renderSectionManager, matrices, pos);
+                    }
+                } finally {
+                    RenderSystem.setProjectionMatrix(projectionMatrix, RenderSystem.getVertexSorting());
+                }
             } catch (Throwable e) {
-                if (T88.TEST) {
+                if (!FMLLoader.isProduction()) {
                     throw new RuntimeException(e);
                 }
             }
         } else {
             frustum.prepare(pos.x, pos.y, pos.z);
             minecraft.levelRenderer.sectionOcclusionGraph.addSectionsInFrustum(frustum, VISIBLE_SECTIONS);
-            RenderType.chunkBufferLayers()
-                    .stream().filter(renderType -> renderType != RenderType.tripwire())
-                    .forEach(renderType -> renderSectionLayer(renderType, pos.x, pos.y, pos.z));
+            for (RenderType renderType : RenderType.chunkBufferLayers()) {
+                if (renderType != RenderType.tripwire()) {
+                    renderSectionLayer(renderType, pos.x, pos.y, pos.z);
+                }
+            }
+        }
+    }
+
+    private void render0(Camera camera, Vec3 pos2, SodiumWorldRenderer renderer, Viewport viewport, Minecraft minecraft, RenderSectionManager renderSectionManager, ChunkRenderMatrices matrices, Vec3 pos) {
+        camera.setPosition(pos2);
+        try {
+            RenderDevice.enterManagedCode();
+            try {
+                String shaderPack = SignMeUp.IRIS_INSTALLED ? IrisAccess.getShaderPackName() : null;
+                rendering = true;
+                try {
+                    renderer.setupTerrain(camera, viewport, minecraft.player.isSpectator(), FlawlessFrames.isActive());
+                    renderSectionManager.renderLayer(matrices, DefaultTerrainRenderPasses.SOLID, pos2.x, pos2.y, pos2.z);
+                    renderSectionManager.renderLayer(matrices, DefaultTerrainRenderPasses.CUTOUT, pos2.x, pos2.y, pos2.z);
+                    renderSectionManager.renderLayer(matrices, DefaultTerrainRenderPasses.TRANSLUCENT, pos2.x, pos2.y, pos2.z);
+                } finally {
+                    rendering = false;
+
+                    if (shaderPack != null) {
+                        IrisAccess.setShaderPackName(shaderPack);
+                    }
+                }
+            } finally {
+                RenderDevice.exitManagedCode();
+            }
+        } finally {
+            camera.setPosition(pos);
         }
     }
 

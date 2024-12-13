@@ -1,4 +1,4 @@
-package org.teacon.signmeup.hud;
+package org.teacon.signmeup.hud.compat;
 
 import net.caffeinemc.mods.sodium.client.render.SodiumWorldRenderer;
 import net.caffeinemc.mods.sodium.client.render.chunk.ChunkRenderer;
@@ -17,7 +17,7 @@ public class SodiumAccess {
     private static final MethodHandle RENDER_SECTION_MANAGER;
 
     static {
-        if (!SignMeUp.IS_SODIUM_INSTALLED) {
+        if (!SignMeUp.SODIUM_INSTALLED) {
             throw new AssertionError("Sodium is not installed.");
         }
 

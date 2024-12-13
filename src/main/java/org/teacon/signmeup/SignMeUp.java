@@ -17,10 +17,11 @@ import org.teacon.signmeup.config.Waypoints;
 @Mod(SignMeUp.MODID)
 public class SignMeUp {
     public static final String MODID = "sign_up";
-    public static final boolean IS_SODIUM_INSTALLED = ModList.get().isLoaded("sodium");
-    public static final int MAIN_COLOR = 0x14b8a6;
 
-    public SignMeUp(IEventBus modEventBus, ModContainer modContainer) {
+    public static final boolean SODIUM_INSTALLED = ModList.get().isLoaded("sodium");
+    public static final boolean IRIS_INSTALLED = ModList.get().isLoaded("iris");
+
+    public SignMeUp(IEventBus bus, ModContainer mod) {
         ConfigHelper.loadConfig(new PlayerCommands());
         ConfigHelper.loadConfig(new Map());
         ConfigHelper.loadConfig(new Waypoints());

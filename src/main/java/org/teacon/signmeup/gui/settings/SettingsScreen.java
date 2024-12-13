@@ -8,7 +8,7 @@ import net.minecraft.network.chat.Component;
 import org.teacon.signmeup.config.MiniMap;
 import org.teacon.signmeup.hud.InnerMiniMapPanel;
 import org.teacon.signmeup.hud.MiniMapPanel;
-import org.teacon.signmeup.hud.RefreshRate;
+import org.teacon.signmeup.config.RefreshRate;
 
 import java.util.List;
 

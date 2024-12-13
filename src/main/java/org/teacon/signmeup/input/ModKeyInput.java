@@ -36,7 +36,7 @@ public class ModKeyInput {
         } else {
             return;
         }
-        screen.layout();
         Minecraft.getInstance().setScreen(screen);
+        screen.layout();
     }
 }

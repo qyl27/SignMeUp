@@ -1,4 +1,4 @@
-package org.teacon.signmeup.hud;
+package org.teacon.signmeup.config;
 
 import cn.ussshenzhou.t88.gui.util.ITranslatable;
 

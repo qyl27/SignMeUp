@@ -2,7 +2,6 @@ package org.teacon.signmeup.config;
 
 import cn.ussshenzhou.t88.config.TConfig;
 import net.minecraft.util.Mth;
-import org.teacon.signmeup.hud.RefreshRate;
 
 /**
  * @author USS_Shenzhou
