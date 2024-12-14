@@ -9,6 +9,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import org.joml.Quaternionf;
 import org.teacon.signmeup.SignMeUp;
 import org.teacon.signmeup.config.MiniMap;
+import org.teacon.signmeup.gui.map.MapScreen;
 
 import java.util.Set;
 
@@ -47,7 +48,11 @@ public class MiniMapPanel extends TPanel {
     @Override
     public void tickT() {
         super.tickT();
-        var visible = !Minecraft.getInstance().getDebugOverlay().showDebugScreen() && !Minecraft.getInstance().options.hideGui && MiniMapAPI.INSTANCE.visible();
+        Minecraft mc = Minecraft.getInstance();
+        var visible = !mc.getDebugOverlay().showDebugScreen()
+                && !mc.options.hideGui
+                && MiniMapAPI.INSTANCE.visible()
+                && !(mc.screen instanceof MapScreen);
         children.forEach(childTComponent -> childTComponent.setVisibleT(visible));
     }
 

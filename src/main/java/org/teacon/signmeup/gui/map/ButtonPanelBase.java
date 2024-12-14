@@ -19,33 +19,17 @@ import org.teacon.signmeup.SignMeUp;
  * @author USS_Shenzhou
  */
 public abstract class ButtonPanelBase extends TPanel {
-    private final TImage topDeco = new TImage(SignMeUp.id("textures/gui/button_panel_top.png")) {
-        @Override
-        public void renderTop(GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
-            super.renderTop(graphics, pMouseX, pMouseY, pPartialTick);
-            super.render(graphics, pMouseX, pMouseY, pPartialTick);
-        }
-
-        @Override
-        public void render(GuiGraphics guigraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        }
-    };
-    private final TImage bottomDeco = new TImage(SignMeUp.id("textures/gui/button_panel_bottom.png")) {
-        @Override
-        public void renderTop(GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
-            super.renderTop(graphics, pMouseX, pMouseY, pPartialTick);
-            super.render(graphics, pMouseX, pMouseY, pPartialTick);
-        }
-
-        @Override
-        public void render(GuiGraphics guigraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        }
-    };
+    private final TImage topDeco;
+    private final TImage bottomDeco;
 
     private static final ResourceLocation ARROW_LEFT = SignMeUp.id("textures/gui/button_panel_arrow_left.png");
-    private final static ResourceLocation ARROW_RIGHT = SignMeUp.id("textures/gui/button_panel_arrow_right.png");
-    private final static ResourceLocation ARROW_LEFT_HD = SignMeUp.id("textures/gui/button_panel_arrow_left_hovered.png");
-    private final static ResourceLocation ARROW_RIGHT_HD = SignMeUp.id("textures/gui/button_panel_arrow_right_hovered.png");
+    private static final ResourceLocation ARROW_RIGHT = SignMeUp.id("textures/gui/button_panel_arrow_right.png");
+    private static final ResourceLocation ARROW_LEFT_HD = SignMeUp.id("textures/gui/button_panel_arrow_left_hovered.png");
+    private static final ResourceLocation ARROW_RIGHT_HD = SignMeUp.id("textures/gui/button_panel_arrow_right_hovered.png");
+    private static final ResourceLocation BUTTON_PANEL_TL = SignMeUp.id("textures/gui/button_panel_top_left.png");;
+    private static final ResourceLocation BUTTON_PANEL_BL = SignMeUp.id("textures/gui/button_panel_bottom_left.png");;
+    private static final ResourceLocation BUTTON_PANEL_TR = SignMeUp.id("textures/gui/button_panel_top_right.png");;
+    private static final ResourceLocation BUTTON_PANEL_BR = SignMeUp.id("textures/gui/button_panel_bottom_right.png");;
 
     private static final class THoverSensitiveImageButtonImpl extends THoverSensitiveImageButton {
         private TImage image, hovered;
@@ -91,8 +75,28 @@ public abstract class ButtonPanelBase extends TPanel {
         this.left = left;
         this.setBackground(0xaa564149);
         this.add(buttons);
-        this.add(topDeco);
-        this.add(bottomDeco);
+        this.add(topDeco = new TImage(left ? BUTTON_PANEL_TL : BUTTON_PANEL_TR) {
+            @Override
+            public void renderTop(GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
+                super.renderTop(graphics, pMouseX, pMouseY, pPartialTick);
+                super.render(graphics, pMouseX, pMouseY, pPartialTick);
+            }
+
+            @Override
+            public void render(GuiGraphics guigraphics, int pMouseX, int pMouseY, float pPartialTick) {
+            }
+        });
+        this.add(bottomDeco = new TImage(left ? BUTTON_PANEL_BL : BUTTON_PANEL_BR) {
+            @Override
+            public void renderTop(GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
+                super.renderTop(graphics, pMouseX, pMouseY, pPartialTick);
+                super.render(graphics, pMouseX, pMouseY, pPartialTick);
+            }
+
+            @Override
+            public void render(GuiGraphics guigraphics, int pMouseX, int pMouseY, float pPartialTick) {
+            }
+        });
         this.add(collapse = new THoverSensitiveImageButtonImpl(Component.empty(), b -> switchCollapse(), left));
     }
 

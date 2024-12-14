@@ -6,6 +6,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -14,6 +15,7 @@ import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.commands.arguments.coordinates.WorldCoordinates;
 import net.minecraft.core.Rotations;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import org.teacon.signmeup.config.Waypoints;
 import org.teacon.signmeup.network.RemoveWaypointPacket;
 import org.teacon.signmeup.network.SetWaypointPacket;
@@ -59,11 +61,14 @@ public class OpCommands {
 
         ConfigHelper.getConfigWrite(Waypoints.class, waypoints -> {
             waypoints.waypoints.stream().filter(w -> w.name.equals(waypoint.name)).findFirst().ifPresentOrElse(
-                    point -> context.getSource().sendSuccess(() -> Component.literal("[" + point + "] already exists. Remove it first if you want to replace it."), true),
+                    point -> context.getSource().sendSuccess(() -> Component.literal(point + " already exists. Remove it first if you want to replace it."), true),
                     () -> {
-                        context.getSource().sendSuccess(() -> Component.literal("Added " + waypoint), true);
                         waypoints.waypoints.add(waypoint);
                         NetworkHelper.sendToAllPlayers(new SetWaypointPacket(name, description, pos, new Rotations(rotation.y, 0, rotation.x)));
+                        context.getSource().sendSuccess(() -> Component.literal(waypoint + " has been added."), true);
+                        if (description.startsWith("\"") && description.endsWith("\"")) {
+                            context.getSource().sendSuccess(() -> Component.literal("The waypoint description is quoted with '\"'. This is a greedy string where '\"' is unnecessary.").setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW)), true);
+                        }
                     }
             );
         });
@@ -76,7 +81,7 @@ public class OpCommands {
         var waypoint = Waypoints.WayPoint.dumbWayPoint(name);
         ConfigHelper.getConfigWrite(Waypoints.class, waypoints -> {
             if (waypoints.waypoints.remove(waypoint)) {
-                context.getSource().sendSuccess(() -> Component.literal("[" + name + "] removed"), true);
+                context.getSource().sendSuccess(() -> Component.literal(waypoint + " has been removed."), true);
                 Optional.ofNullable(context.getSource().getPlayer())
                         .ifPresent(player -> NetworkHelper.sendToAllPlayers(new RemoveWaypointPacket(name)));
             } else {
