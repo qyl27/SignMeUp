@@ -88,19 +88,22 @@ public class MapPanel extends TVerticalAndHorizontalScrollContainer {
             guigraphics.fill(0, py - 1, gw, py + 1, 0xFFE8DDCD);
             guigraphics.fill(px - 1, 0, px + 1, gh, 0xFFE8DDCD);
         } else {
+            double bx = 110, by = 20;
+            double gw2 = gw / 2D, gh2 = gh / 2D;
+            double dx = px - gw2, dy = py - gh2, tan = dx / dy;
+
+            double ax = (dy < 0 ? -tan : tan) * (gh2 - by) + gw2, ay = dy > 0 ? gh - by : by;
+            if (ax <= bx || ax >= gw - bx) {
+                if (tan != 0) {
+                    ay = (gw2 - bx) / (dx > 0 ? tan : -tan) + gh2;
+                }
+                ax = dx > 0 ? gw - bx : bx;
+            }
+
             guigraphics.pose().pushPose();
 
-            double bx = 100, by = 20;
-            double dx = px - gw / 2D, dy = py - gh / 2D, tan = dx / dy;
-            double ax = tan * (gh / 2D - by) + gw / 2D, ay;
-            if (ax <= bx || ax >= gw - bx) {
-                ay = (gw / 2D - bx) / tan + gh / 2D;
-                ax = dx > 0 ? gw - bx : bx;
-            } else {
-                ay = dy > 0 ? gh - by : by;
-            }
             QUATERNION.identity().rotateZ((float) (-Math.atan(tan) + (dy > 0 ? Math.PI : 0D)));
-            guigraphics.pose().last().pose().rotateAround(QUATERNION, (float) (ax + 16), (float) (ay + 6), 0);
+            guigraphics.pose().last().pose().rotateAround(QUATERNION, (float) ax, (float) ay, 0);
 
             RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
             RenderSystem.enableBlend();

@@ -47,7 +47,7 @@ public class MiniMapPanel extends TPanel {
     @Override
     public void tickT() {
         super.tickT();
-        var visible = !Minecraft.getInstance().getDebugOverlay().showDebugScreen() && MiniMapAPI.INSTANCE.visible();
+        var visible = !Minecraft.getInstance().getDebugOverlay().showDebugScreen() && !Minecraft.getInstance().options.hideGui && MiniMapAPI.INSTANCE.visible();
         children.forEach(childTComponent -> childTComponent.setVisibleT(visible));
     }
 
