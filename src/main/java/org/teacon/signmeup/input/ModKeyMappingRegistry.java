@@ -12,7 +12,7 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 public class ModKeyMappingRegistry {
     @SubscribeEvent
     public static void onRegisterKey(RegisterKeyMappingsEvent event) {
-        event.register(ModKeyInput.OPEN_MAP);
         event.register(ModKeyInput.OPEN_NEW_MAP);
+        event.register(ModKeyInput.OPEN_MAP);
     }
 }

@@ -10,6 +10,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.teacon.signmeup.SignMeUp;
 import org.teacon.signmeup.config.Waypoints;
+import org.teacon.signmeup.gui.map.MapScreen;
 
 /**
  * @author USS_Shenzhou
@@ -27,5 +28,6 @@ public record RemoveWaypointPacket(String name) {
     @ClientHandler
     public void clientHandler(IPayloadContext context) {
         ConfigHelper.getConfigWrite(Waypoints.class, waypoints -> waypoints.waypoints.remove(Waypoints.WayPoint.dumbWayPoint(name)));
+        context.enqueueWork(MapScreen::newInstance);
     }
 }

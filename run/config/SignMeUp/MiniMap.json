@@ -1,7 +1,7 @@
 {
-  "coverRange": 320,
-  "followPlayerRotation": false,
+  "coverRange": 30,
+  "followPlayerRotation": true,
   "ssaaRatio": 1.5,
   "visible": true,
-  "refreshRate": "TICK"
+  "refreshRate": "EVERY_FRAME"
 }

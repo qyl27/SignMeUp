@@ -1,6 +1,7 @@
 package org.teacon.signmeup;
 
 import cn.ussshenzhou.t88.config.ConfigHelper;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -29,6 +30,8 @@ public class SignMeUp {
         ConfigHelper.loadConfig(new Map());
         ConfigHelper.loadConfig(new Waypoints());
         ConfigHelper.loadConfig(new MiniMap());
+
+        Minecraft.getInstance().execute(() -> Thread.currentThread().setPriority((Thread.MAX_PRIORITY + Thread.NORM_PRIORITY) / 2));
     }
 
     public static ResourceLocation id(String path) {

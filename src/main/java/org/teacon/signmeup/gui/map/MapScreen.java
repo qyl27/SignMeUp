@@ -5,6 +5,7 @@ import cn.ussshenzhou.t88.gui.screen.TScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.client.ClientHooks;
 import org.teacon.signmeup.SignMeUp;
@@ -12,8 +13,6 @@ import org.teacon.signmeup.gui.map.bp.CommandsButtonPanel;
 import org.teacon.signmeup.gui.map.bp.WayPointsButtonPanel;
 import org.teacon.signmeup.gui.settings.SettingsScreen;
 import org.teacon.signmeup.hud.MiniMapAPI;
-
-import java.util.Set;
 
 /**
  * @author USS_Shenzhou
@@ -29,6 +28,15 @@ public class MapScreen extends TScreen {
     private final CommandsButtonPanel commandsButtonPanel = new CommandsButtonPanel();
     private final WayPointsButtonPanel wayPointsButtonPanel = new WayPointsButtonPanel();
 
+    public static void newInstance() {
+        Screen screen = Minecraft.getInstance().screen;
+        if (screen instanceof MapScreen || screen instanceof SettingsScreen) {
+            ((TScreen) screen).onClose(false);
+            Minecraft.getInstance().setScreen(MapScreen.getNewInstance());
+        } else {
+            MapScreen.getNewInstance();
+        }
+    }
 
     public static MapScreen getNewInstance() {
         instance = new MapScreen();
